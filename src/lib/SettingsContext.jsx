@@ -9,7 +9,6 @@ const DEFAULTS = {
   soundEnabled: true,
   notificationsEnabled: false,
   compactMode: false,
-  dailyGoal: 1,
 };
 
 const SettingsContext = createContext(null);

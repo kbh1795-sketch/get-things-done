@@ -1,24 +1,26 @@
 import { useRef, useState } from 'react';
 import { useAllTasks } from '@/hooks/useTaskData';
 import { useSettings } from '@/lib/SettingsContext';
-import { computeDailyStreak, computeWeeklyStreak, computeMonthlyStreak, MILESTONES } from '@/lib/achievements';
+import { computeDailyStreak, computeWeeklyStreak, computeMonthlyStreak, getDayProgress, MILESTONES } from '@/lib/achievements';
+import { format } from 'date-fns';
 import { shareAchievement, shareToX } from '@/lib/share';
 import ShareCard from '@/components/achievements/ShareCard';
 import { Button } from '@/components/ui/button';
-import { Flame, Trophy, Share2, Target } from 'lucide-react';
+import { Flame, Trophy, Share2 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 export default function Achievements() {
   const { data: tasks = [] } = useAllTasks();
-  const { settings, update } = useSettings();
+  const { settings } = useSettings();
   const cardRef = useRef(null);
   const [sharing, setSharing] = useState(false);
 
-  const dailyGoal = settings.dailyGoal || 1;
-  const { current: dailyStreak, best: bestStreak } = computeDailyStreak(tasks, dailyGoal);
+  const { current: dailyStreak, best: bestStreak } = computeDailyStreak(tasks);
   const weeklyStreak = computeWeeklyStreak(tasks, settings.weekStart);
   const monthlyStreak = computeMonthlyStreak(tasks);
   const totalCompleted = tasks.filter((t) => t.completed).length;
+  const today = format(new Date(), 'yyyy-MM-dd');
+  const progress = getDayProgress(tasks, today);
 
   const shareText = `🔥 ${dailyStreak}일 연속 할 일 달성! 총 ${totalCompleted}개 완료. 마이태스크와 함께 나만의 리듬을 만들어가는 중입니다. #마이태스크 #할일달성`;
 
@@ -45,7 +47,7 @@ export default function Achievements() {
       <div className="rounded-2xl p-6 bg-gradient-to-br from-orange-500 to-red-500 text-white text-center">
         <Flame className="w-10 h-10 mx-auto mb-2" />
         <p className="text-5xl font-bold">{dailyStreak}<span className="text-2xl ml-1">일</span></p>
-        <p className="text-sm opacity-90 mt-1">연속 달성 (목표: 하루 {dailyGoal}개)</p>
+        <p className="text-sm opacity-90 mt-1">연속 달성 · 하루 3개+ · 루틴 80% · P1 100%</p>
         <div className="flex justify-center items-center gap-6 mt-4 text-sm">
           <div><p className="font-semibold text-lg">{bestStreak}일</p><p className="opacity-80 text-xs">최장 스트릭</p></div>
           <div className="w-px h-8 bg-white/30" />
@@ -55,16 +57,18 @@ export default function Achievements() {
         </div>
       </div>
 
-      <div className="rounded-xl border bg-card p-4 flex items-center justify-between">
-        <div>
-          <p className="text-sm font-medium flex items-center gap-1"><Target className="w-4 h-4" /> 일일 목표</p>
-          <p className="text-xs text-muted-foreground">하루에 완료할 할 일 개수</p>
+      <div className="rounded-xl border bg-card p-4">
+        <p className="text-sm font-medium mb-3">오늘의 달성 현황</p>
+        <div className="space-y-2">
+          <CondRow label="3개 이상 완료" status={`${progress.completedCount}개`} done={progress.completedCount >= 3} />
+          <CondRow label="루틴 80% 완료" status={`${progress.routineDone}/${progress.routineTotal}`} done={progress.routineTotal === 0 || progress.routineDone / progress.routineTotal >= 0.8} />
+          <CondRow label="P1 100% 완료" status={`${progress.p1Done}/${progress.p1Total}`} done={progress.p1Total === 0 || progress.p1Done === progress.p1Total} />
         </div>
-        <div className="flex items-center gap-2">
-          <button onClick={() => update('dailyGoal', Math.max(1, dailyGoal - 1))} className="w-8 h-8 rounded-lg border hover:bg-muted text-lg leading-none">−</button>
-          <span className="w-8 text-center font-semibold">{dailyGoal}</span>
-          <button onClick={() => update('dailyGoal', dailyGoal + 1)} className="w-8 h-8 rounded-lg border hover:bg-muted text-lg leading-none">+</button>
-        </div>
+        {progress.achieved ? (
+          <p className="text-xs text-green-600 font-medium mt-3">오늘 달성 완료! 🎉</p>
+        ) : (
+          <p className="text-xs text-muted-foreground mt-3">세 조건을 모두 충족하면 오늘이 스트릭에 추가돼요</p>
+        )}
       </div>
 
       <div className="rounded-xl border bg-card p-4">
@@ -110,6 +114,18 @@ export default function Achievements() {
       <div style={{ position: 'fixed', left: '-9999px', top: 0, pointerEvents: 'none' }} aria-hidden>
         <ShareCard cardRef={cardRef} streak={dailyStreak} totalCompleted={totalCompleted} bestStreak={bestStreak} />
       </div>
+    </div>
+  );
+}
+
+function CondRow({ label, status, done }) {
+  return (
+    <div className="flex items-center justify-between text-sm">
+      <span className="flex items-center gap-2">
+        <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${done ? 'bg-green-100 text-green-600' : 'bg-muted text-muted-foreground'}`}>{done ? '✓' : '·'}</span>
+        {label}
+      </span>
+      <span className={`text-xs font-medium ${done ? 'text-green-600' : 'text-muted-foreground'}`}>{status}</span>
     </div>
   );
 }

@@ -1,25 +1,57 @@
-import { format, subDays, subWeeks, subMonths, parseISO, differenceInDays, startOfWeek, startOfMonth } from 'date-fns';
+import { format, subDays, subWeeks, subMonths, parseISO, differenceInDays, startOfWeek, startOfMonth, eachDayOfInterval, endOfWeek, endOfMonth } from 'date-fns';
 
-export function getDailyCounts(tasks) {
-  const counts = {};
-  tasks.filter((t) => t.completed && t.completed_date).forEach((t) => {
-    counts[t.completed_date] = (counts[t.completed_date] || 0) + 1;
-  });
-  return counts;
+// A day is "achieved" when ALL three conditions are met:
+// 1. at least 3 tasks completed that day
+// 2. 80%+ of routine tasks due that day are completed
+// 3. 100% of priority-1 tasks due that day are completed
+export function isDayAchieved(tasks, dateStr) {
+  const completedThatDay = tasks.filter((t) => t.completed && t.completed_date === dateStr).length;
+  if (completedThatDay < 3) return false;
+
+  const routineDue = tasks.filter((t) => t.due_date === dateStr && t.is_routine);
+  if (routineDue.length > 0) {
+    const done = routineDue.filter((t) => t.completed).length;
+    if (done / routineDue.length < 0.8) return false;
+  }
+
+  const p1Due = tasks.filter((t) => t.due_date === dateStr && t.priority === 1);
+  if (p1Due.length > 0) {
+    const done = p1Due.filter((t) => t.completed).length;
+    if (done < p1Due.length) return false;
+  }
+  return true;
 }
 
-export function computeDailyStreak(tasks, goal = 1) {
-  const counts = getDailyCounts(tasks);
-  const met = (d) => (counts[format(d, 'yyyy-MM-dd')] || 0) >= goal;
+export function getDayProgress(tasks, dateStr) {
+  const completedThatDay = tasks.filter((t) => t.completed && t.completed_date === dateStr).length;
+  const routineDue = tasks.filter((t) => t.due_date === dateStr && t.is_routine);
+  const p1Due = tasks.filter((t) => t.due_date === dateStr && t.priority === 1);
+  return {
+    completedCount: completedThatDay,
+    routineDone: routineDue.filter((t) => t.completed).length,
+    routineTotal: routineDue.length,
+    p1Done: p1Due.filter((t) => t.completed).length,
+    p1Total: p1Due.length,
+    achieved: isDayAchieved(tasks, dateStr),
+  };
+}
+
+export function computeDailyStreak(tasks) {
+  const dateSet = new Set();
+  tasks.forEach((t) => {
+    if (t.completed_date) dateSet.add(t.completed_date);
+    if (t.due_date) dateSet.add(t.due_date);
+  });
+  const dates = [...dateSet].sort();
+
   let current = 0;
   let cursor = new Date();
-  if (!met(cursor)) cursor = subDays(cursor, 1);
-  while (met(cursor)) { current++; cursor = subDays(cursor, 1); }
+  if (!isDayAchieved(tasks, format(cursor, 'yyyy-MM-dd'))) cursor = subDays(cursor, 1);
+  while (isDayAchieved(tasks, format(cursor, 'yyyy-MM-dd'))) { current++; cursor = subDays(cursor, 1); }
 
-  const sorted = Object.keys(counts).sort();
   let best = 0, run = 0, prev = null;
-  for (const d of sorted) {
-    if ((counts[d] || 0) < goal) { run = 0; prev = d; continue; }
+  for (const d of dates) {
+    if (!isDayAchieved(tasks, d)) { run = 0; prev = d; continue; }
     if (prev && differenceInDays(parseISO(d), parseISO(prev)) === 1) run++;
     else run = 1;
     best = Math.max(best, run);
@@ -28,29 +60,29 @@ export function computeDailyStreak(tasks, goal = 1) {
   return { current, best };
 }
 
+function weekHasPerfectDay(tasks, weekStart, weekStartsOn) {
+  const days = eachDayOfInterval({ start: weekStart, end: endOfWeek(weekStart, { weekStartsOn }) });
+  return days.some((d) => isDayAchieved(tasks, format(d, 'yyyy-MM-dd')));
+}
+
 export function computeWeeklyStreak(tasks, weekStartsOn = 1) {
-  const counts = {};
-  tasks.filter((t) => t.completed && t.completed_date).forEach((t) => {
-    const wk = format(startOfWeek(parseISO(t.completed_date), { weekStartsOn }), 'yyyy-MM-dd');
-    counts[wk] = (counts[wk] || 0) + 1;
-  });
   let current = 0;
   let cursor = startOfWeek(new Date(), { weekStartsOn });
-  if (!counts[format(cursor, 'yyyy-MM-dd')]) cursor = subWeeks(cursor, 1);
-  while (counts[format(cursor, 'yyyy-MM-dd')]) { current++; cursor = subWeeks(cursor, 1); }
+  if (!weekHasPerfectDay(tasks, cursor, weekStartsOn)) cursor = subWeeks(cursor, 1);
+  while (weekHasPerfectDay(tasks, cursor, weekStartsOn)) { current++; cursor = subWeeks(cursor, 1); }
   return current;
 }
 
+function monthHasPerfectDay(tasks, monthStart) {
+  const days = eachDayOfInterval({ start: monthStart, end: endOfMonth(monthStart) });
+  return days.some((d) => isDayAchieved(tasks, format(d, 'yyyy-MM-dd')));
+}
+
 export function computeMonthlyStreak(tasks) {
-  const counts = {};
-  tasks.filter((t) => t.completed && t.completed_date).forEach((t) => {
-    const m = format(startOfMonth(parseISO(t.completed_date)), 'yyyy-MM-dd');
-    counts[m] = (counts[m] || 0) + 1;
-  });
   let current = 0;
   let cursor = startOfMonth(new Date());
-  if (!counts[format(cursor, 'yyyy-MM-dd')]) cursor = subMonths(cursor, 1);
-  while (counts[format(cursor, 'yyyy-MM-dd')]) { current++; cursor = subMonths(cursor, 1); }
+  if (!monthHasPerfectDay(tasks, cursor)) cursor = subMonths(cursor, 1);
+  while (monthHasPerfectDay(tasks, cursor)) { current++; cursor = subMonths(cursor, 1); }
   return current;
 }
 
