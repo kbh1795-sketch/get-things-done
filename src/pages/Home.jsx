@@ -5,12 +5,15 @@ import TaskItem from '@/components/tasks/TaskItem';
 import { Button } from '@/components/ui/button';
 import { Plus, Loader2 } from 'lucide-react';
 import { BUCKET_ORDER, BUCKET_LABELS, getDateBucket, getNextDueDate } from '@/lib/taskUtils';
+import { useSettings } from '@/lib/SettingsContext';
+import { playCompletionSound } from '@/lib/sound';
 import { format } from 'date-fns';
 
 export default function Home() {
   const { data: tasks = [], isLoading } = useAllTasks();
   const { data: projects = [] } = useAllProjects();
   const { createTask, updateTask, deleteTask, bulkCreateTasks } = useTaskMutations();
+  const { settings } = useSettings();
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState(null);
 
@@ -26,6 +29,7 @@ export default function Home() {
 
   const handleToggle = (task) => {
     const today = format(new Date(), 'yyyy-MM-dd');
+    if (!task.completed && settings.soundEnabled) playCompletionSound();
     if (!task.completed && task.is_routine && task.repeat_frequency && task.repeat_frequency !== 'none') {
       updateTask.mutate({ id: task.id, data: { completed: true, completed_date: today } });
       const nextDate = getNextDueDate(task.due_date, task.repeat_frequency);
@@ -42,7 +46,7 @@ export default function Home() {
 
   const buckets = {};
   BUCKET_ORDER.forEach((b) => (buckets[b] = []));
-  activeTasks.forEach((t) => buckets[getDateBucket(t)].push(t));
+  activeTasks.forEach((t) => buckets[getDateBucket(t, settings.weekStart)].push(t));
 
   return (
     <div className="max-w-3xl mx-auto p-4 md:p-8">

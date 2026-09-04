@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useAllTasks } from '@/hooks/useTaskData';
+import { useSettings } from '@/lib/SettingsContext';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { Loader2, CheckCircle2, Target, TrendingUp } from 'lucide-react';
 import {
@@ -18,6 +19,7 @@ const VIEWS = [
 
 export default function Stats() {
   const { data: tasks = [], isLoading } = useAllTasks();
+  const { settings } = useSettings();
   const [view, setView] = useState('daily');
 
   const completed = tasks.filter((t) => t.completed && t.completed_date);
@@ -34,8 +36,8 @@ export default function Stats() {
     if (view === 'weekly') {
       const weeks = [];
       for (let i = 7; i >= 0; i--) {
-        const start = startOfWeek(subWeeks(now, i), { weekStartsOn: 1 });
-        const end = endOfWeek(subWeeks(now, i), { weekStartsOn: 1 });
+        const start = startOfWeek(subWeeks(now, i), { weekStartsOn: settings.weekStart });
+        const end = endOfWeek(subWeeks(now, i), { weekStartsOn: settings.weekStart });
         weeks.push({ start, end });
       }
       return weeks.map((w) => ({
@@ -75,7 +77,7 @@ export default function Stats() {
   const todayCount = completed.filter((t) => t.completed_date && isSameDay(parseISO(t.completed_date), now)).length;
   const thisWeekCount = completed.filter((t) => {
     if (!t.completed_date) return false;
-    return parseISO(t.completed_date) >= startOfWeek(now, { weekStartsOn: 1 });
+    return parseISO(t.completed_date) >= startOfWeek(now, { weekStartsOn: settings.weekStart });
   }).length;
 
   return (

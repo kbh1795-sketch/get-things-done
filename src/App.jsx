@@ -13,6 +13,7 @@ import Home from '@/pages/Home';
 import Stats from '@/pages/Stats';
 import Projects from '@/pages/Projects';
 import Backlog from '@/pages/Backlog';
+import Settings from '@/pages/Settings';
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
 import ForgotPassword from '@/pages/ForgotPassword';
@@ -54,6 +55,7 @@ const AuthenticatedApp = () => {
           <Route path="/stats" element={<Stats />} />
           <Route path="/projects" element={<Projects />} />
           <Route path="/backlog" element={<Backlog />} />
+          <Route path="/settings" element={<Settings />} />
         </Route>
       </Route>
       <Route path="*" element={<PageNotFound />} />

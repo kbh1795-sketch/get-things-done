@@ -25,15 +25,26 @@ export function getNextDueDate(dueDate, frequency) {
   }
 }
 
-export function getDateBucket(task) {
+export function getDateBucket(task, weekStartsOn = 1) {
   if (task.completed) return 'completed';
   if (!task.due_date) return 'no_date';
   const d = parseISO(task.due_date);
   if (isToday(d)) return 'today';
   if (isTomorrow(d)) return 'tomorrow';
   if (isPast(startOfDay(d))) return 'overdue';
-  if (isThisWeek(d, { weekStartsOn: 1 })) return 'this_week';
+  if (isThisWeek(d, { weekStartsOn })) return 'this_week';
   return 'later';
+}
+
+export function formatTime(timeStr, format) {
+  if (!timeStr) return '';
+  if (format === '12h') {
+    const [h, m] = timeStr.split(':').map(Number);
+    const period = h >= 12 ? 'PM' : 'AM';
+    const h12 = h % 12 || 12;
+    return `${h12}:${String(m).padStart(2, '0')} ${period}`;
+  }
+  return timeStr;
 }
 
 export const BUCKET_LABELS = {

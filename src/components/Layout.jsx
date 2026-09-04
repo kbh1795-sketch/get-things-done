@@ -1,18 +1,21 @@
 import { Outlet, NavLink } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
-import { CheckSquare, BarChart3, FolderKanban, Inbox, LogOut, CalendarCheck } from 'lucide-react';
+import { CheckSquare, BarChart3, FolderKanban, Inbox, LogOut, CalendarCheck, Settings as SettingsIcon } from 'lucide-react';
+import { SettingsProvider } from '@/lib/SettingsContext';
 
 const navItems = [
   { to: '/', label: '할 일', icon: CheckSquare, end: true },
   { to: '/stats', label: '성과', icon: BarChart3 },
   { to: '/projects', label: '프로젝트', icon: FolderKanban },
   { to: '/backlog', label: '백로그', icon: Inbox },
+  { to: '/settings', label: '설정', icon: SettingsIcon },
 ];
 
 export default function Layout() {
   const { user, logout } = useAuth();
 
   return (
+    <SettingsProvider>
     <div className="min-h-screen bg-background flex flex-col md:flex-row">
       <aside className="hidden md:flex w-64 flex-col border-r bg-sidebar p-4 gap-1 shrink-0">
         <div className="flex items-center gap-2 px-3 py-4 mb-2">
@@ -77,5 +80,6 @@ export default function Layout() {
         })}
       </nav>
     </div>
+    </SettingsProvider>
   );
 }

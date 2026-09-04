@@ -31,6 +31,7 @@ export function useTaskMutations() {
     updateTask: useMutation({ mutationFn: ({ id, data }) => base44.entities.Task.update(id, data), onSuccess: invalidate }),
     deleteTask: useMutation({ mutationFn: (id) => base44.entities.Task.delete(id), onSuccess: invalidate }),
     bulkCreateTasks: useMutation({ mutationFn: (data) => base44.entities.Task.bulkCreate(data), onSuccess: invalidate }),
+    deleteCompleted: useMutation({ mutationFn: (userId) => base44.entities.Task.deleteMany({ completed: true, created_by_id: userId }), onSuccess: invalidate }),
   };
 }
 
