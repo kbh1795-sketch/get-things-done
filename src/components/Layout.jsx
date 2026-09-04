@@ -1,6 +1,6 @@
 import { Outlet, NavLink } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
-import { CheckSquare, BarChart3, FolderKanban, Inbox, LogOut, Target, Settings as SettingsIcon, Award, CalendarDays } from 'lucide-react';
+import { CheckSquare, FolderKanban, Inbox, LogOut, Target, Settings as SettingsIcon, Award, CalendarDays, ScrollText } from 'lucide-react';
 import { useI18n } from '@/lib/I18nContext';
 
 export default function Layout() {
@@ -9,10 +9,10 @@ export default function Layout() {
   const navItems = [
     { to: '/', label: t('nav.tasks'), icon: CheckSquare, end: true },
     { to: '/schedule', label: t('nav.schedule'), icon: CalendarDays },
-    { to: '/stats', label: t('nav.stats'), icon: BarChart3 },
-    { to: '/achievements', label: t('nav.achievements'), icon: Award },
     { to: '/projects', label: t('nav.projects'), icon: FolderKanban },
+    { to: '/charter', label: t('nav.charter'), icon: ScrollText },
     { to: '/backlog', label: t('nav.backlog'), icon: Inbox },
+    { to: '/achievements', label: t('nav.achievements'), icon: Award },
     { to: '/settings', label: t('nav.settings'), icon: SettingsIcon },
   ];
 

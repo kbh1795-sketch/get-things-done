@@ -1,0 +1,12 @@
+{
+  "name": "Charter",
+  "type": "object",
+  "properties": {
+    "content": {
+      "type": "string",
+      "title": "\ub0b4\uc6a9",
+      "default": ""
+    }
+  },
+  "required": []
+}
