@@ -1,0 +1,70 @@
+{
+  "name": "Task",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "title": "\uc81c\ubaa9",
+      "description": "\ud560 \uc77c \uc81c\ubaa9"
+    },
+    "description": {
+      "type": "string",
+      "title": "\uc124\uba85"
+    },
+    "due_date": {
+      "type": "string",
+      "format": "date",
+      "title": "\ub9c8\uac10\uc77c"
+    },
+    "due_time": {
+      "type": "string",
+      "title": "\ub9c8\uac10 \uc2dc\uac04"
+    },
+    "priority": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 4,
+      "default": 3,
+      "title": "\uc911\uc694\ub3c4"
+    },
+    "completed": {
+      "type": "boolean",
+      "default": false,
+      "title": "\uc644\ub8cc \uc5ec\ubd80"
+    },
+    "completed_date": {
+      "type": "string",
+      "format": "date",
+      "title": "\uc644\ub8cc\uc77c"
+    },
+    "is_routine": {
+      "type": "boolean",
+      "default": false,
+      "title": "\ubc18\ubcf5 \uc5ec\ubd80"
+    },
+    "repeat_frequency": {
+      "type": "string",
+      "enum": [
+        "none",
+        "daily",
+        "weekly",
+        "monthly",
+        "yearly"
+      ],
+      "default": "none",
+      "title": "\ubc18\ubcf5 \uc8fc\uae30"
+    },
+    "project_id": {
+      "type": "string",
+      "title": "\ud504\ub85c\uc81d\ud2b8 ID"
+    },
+    "is_backlog": {
+      "type": "boolean",
+      "default": false,
+      "title": "\ubc31\ub85c\uadf8 \uc5ec\ubd80"
+    }
+  },
+  "required": [
+    "title"
+  ]
+}
