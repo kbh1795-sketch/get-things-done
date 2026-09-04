@@ -22,6 +22,8 @@ export default function Stats() {
   const { settings } = useSettings();
   const { t, dateLocale } = useI18n();
   const [view, setView] = useState('daily');
+  const primaryChannels = window.getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
+  const chartFill = primaryChannels ? `hsl(${primaryChannels})` : '#6366f1';
 
   const completed = tasks.filter((t) => t.completed && t.completed_date);
   const now = new Date();
@@ -108,7 +110,7 @@ export default function Stats() {
                 <XAxis dataKey="label" tick={{ fontSize: 12 }} />
                 <YAxis allowDecimals={false} tick={{ fontSize: 12 }} />
                 <Tooltip contentStyle={{ borderRadius: 8, fontSize: 12 }} />
-                <Bar dataKey="count" fill="#6366f1" radius={[6, 6, 0, 0]} name={t('stats.barName')} />
+                <Bar dataKey="count" fill={chartFill} radius={[6, 6, 0, 0]} name={t('stats.barName')} />
               </BarChart>
             </ResponsiveContainer>
           </div>

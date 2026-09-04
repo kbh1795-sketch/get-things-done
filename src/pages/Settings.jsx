@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Palette, CalendarClock, Bell, LayoutGrid, Settings as SettingsIcon, Moon, Sun, Monitor, Check, Trash2, Smartphone } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import MobileSelect from '@/components/ui/mobile-select';
 import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
@@ -183,12 +183,12 @@ export default function Settings() {
               <p className="text-sm font-medium">{t('settings.language')}</p>
               <p className="text-xs text-muted-foreground">{t('settings.languageDesc')}</p>
             </div>
-            <Select value={settings.language} onValueChange={(v) => update('language', v)}>
-              <SelectTrigger className="w-36"><SelectValue /></SelectTrigger>
-              <SelectContent>
-                {LANGUAGES.map((l) => <SelectItem key={l.value} value={l.value}>{l.label}</SelectItem>)}
-              </SelectContent>
-            </Select>
+            <MobileSelect
+              value={settings.language}
+              onValueChange={(v) => update('language', v)}
+              triggerClassName="w-36"
+              options={LANGUAGES.map((l) => ({ value: l.value, label: l.label }))}
+            />
           </div>
           <div className="flex items-center justify-between py-3 border-t">
             <div>

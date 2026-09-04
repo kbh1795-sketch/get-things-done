@@ -5,7 +5,7 @@ export default function ShareCard({ cardRef, streak, totalCompleted, bestStreak 
   return (
     <div ref={cardRef} style={{
       width: 1080, height: 1080,
-      background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #db2777 100%)',
+      background: 'linear-gradient(135deg, hsl(var(--share-grad-1)) 0%, hsl(var(--share-grad-2)) 50%, hsl(var(--share-grad-3)) 100%)',
       display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
       color: '#fff', fontFamily: 'sans-serif', padding: 80, boxSizing: 'border-box',
     }}>

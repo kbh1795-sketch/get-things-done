@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import MobileSelect from '@/components/ui/mobile-select';
 import { PRIORITY_CONFIG } from '@/lib/taskUtils';
 import { useI18n } from '@/lib/I18nContext';
 
@@ -90,15 +90,12 @@ export default function TaskForm({ open, onClose, onSave, task, projects, defaul
           </div>
           <div className="space-y-2">
             <Label>{t('taskform.projectLabel')}</Label>
-            <Select value={form.project_id || 'none'} onValueChange={(v) => setForm({ ...form, project_id: v === 'none' ? '' : v })}>
-              <SelectTrigger><SelectValue placeholder={t('taskform.projectNone')} /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="none">{t('taskform.projectNone')}</SelectItem>
-                {projects?.map((p) => (
-                  <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <MobileSelect
+              value={form.project_id || 'none'}
+              onValueChange={(v) => setForm({ ...form, project_id: v === 'none' ? '' : v })}
+              placeholder={t('taskform.projectNone')}
+              options={[{ value: 'none', label: t('taskform.projectNone') }, ...(projects || []).map((p) => ({ value: p.id, label: p.name }))]}
+            />
           </div>
           <div className="flex items-center justify-between rounded-lg border p-3">
             <div>

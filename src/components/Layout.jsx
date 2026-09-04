@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
 import { useQueryClient } from '@tanstack/react-query';
@@ -7,6 +7,7 @@ import { useI18n } from '@/lib/I18nContext';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import PullToRefresh from '@/components/PullToRefresh';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 export default function Layout() {
   const { user, logout } = useAuth();
@@ -30,6 +31,27 @@ export default function Layout() {
   const isRoot = rootRoutes.includes(location.pathname);
   const parentPath = '/' + (location.pathname.split('/')[1] || '');
   const barTitle = isRoot ? titleMap[location.pathname] : (titleMap[parentPath] || t('app.name'));
+
+  const isMobile = useIsMobile();
+  const scrollRef = useRef(null);
+  const tabPath = useRef({});
+  const tabScroll = useRef({});
+  const prevTab = useRef(null);
+
+  const getTab = (pathname) => {
+    const seg = '/' + (pathname.split('/')[1] || '');
+    return rootRoutes.includes(seg) ? seg : (rootRoutes.includes(pathname) ? pathname : null);
+  };
+
+  useEffect(() => {
+    const tab = getTab(location.pathname);
+    if (tab) tabPath.current[tab] = location.pathname;
+    if (isMobile && prevTab.current && prevTab.current !== tab && scrollRef.current && tabScroll.current[tab] != null) {
+      const top = tabScroll.current[tab];
+      setTimeout(() => { if (scrollRef.current) scrollRef.current.scrollTop = top; }, 260);
+    }
+    prevTab.current = tab;
+  }, [location.pathname, isMobile]);
 
   const desktopNav = [
     { to: '/', label: t('nav.tasks'), icon: CheckSquare, end: true },
@@ -112,7 +134,7 @@ export default function Layout() {
             )}
           </div>
         </header>
-        <PullToRefresh className="flex-1 overflow-y-auto scroll-area" onRefresh={handleRefresh}>
+        <PullToRefresh ref={scrollRef} className="flex-1 overflow-y-auto scroll-area" onRefresh={handleRefresh}>
           <AnimatePresence mode="wait">
             <motion.div
               key={location.pathname}
@@ -134,8 +156,14 @@ export default function Layout() {
           return (
             <NavLink key={item.to} to={item.to} end={item.end} aria-label={item.label}
               onClick={(e) => {
-                const active = item.to === '/' ? location.pathname === '/' : location.pathname === item.to || location.pathname.startsWith(item.to + '/');
-                if (active && location.pathname !== item.to) { e.preventDefault(); navigate(item.to); }
+                const currentTab = getTab(location.pathname);
+                if (currentTab === item.to) {
+                  if (location.pathname !== item.to) { e.preventDefault(); navigate(item.to); }
+                } else {
+                  e.preventDefault();
+                  if (isMobile && scrollRef.current && currentTab) tabScroll.current[currentTab] = scrollRef.current.scrollTop;
+                  navigate(tabPath.current[item.to] || item.to);
+                }
               }}
               className={({ isActive }) =>
                 `flex flex-col items-center justify-center gap-1 px-1 rounded-lg text-xs font-medium min-h-[44px] flex-1 ${isActive ? 'text-primary' : 'text-muted-foreground'}`

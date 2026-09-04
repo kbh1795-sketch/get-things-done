@@ -2,7 +2,9 @@ import html2canvas from 'html2canvas';
 
 export async function shareAchievement(cardEl, text) {
   if (!cardEl) return { shared: false };
-  const canvas = await html2canvas(cardEl, { backgroundColor: '#4f46e5', scale: 2, useCORS: true });
+  const bgChannels = window.getComputedStyle(document.documentElement).getPropertyValue('--share-grad-1').trim();
+  const bgColor = bgChannels ? `hsl(${bgChannels})` : '#4f46e5';
+  const canvas = await html2canvas(cardEl, { backgroundColor: bgColor, scale: 2, useCORS: true });
   const blob = await new Promise((res) => canvas.toBlob(res, 'image/png'));
   const file = new File([blob], 'mytask-achievement.png', { type: 'image/png' });
 

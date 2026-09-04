@@ -41,6 +41,9 @@
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+    --share-grad-1: 243 76% 59%;
+    --share-grad-2: 262 83% 58%;
+    --share-grad-3: 333 71% 51%;
   }
 
   .dark {
@@ -76,6 +79,9 @@
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+    --share-grad-1: 243 70% 45%;
+    --share-grad-2: 262 75% 45%;
+    --share-grad-3: 333 70% 44%;
   }
 }
 

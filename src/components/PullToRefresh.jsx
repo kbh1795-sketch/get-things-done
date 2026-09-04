@@ -1,8 +1,9 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, forwardRef, useImperativeHandle } from 'react';
 import { Loader2 } from 'lucide-react';
 
-export default function PullToRefresh({ children, onRefresh, className }) {
+const PullToRefresh = forwardRef(function PullToRefresh({ children, onRefresh, className }, forwardedRef) {
   const ref = useRef(null);
+  useImperativeHandle(forwardedRef, () => ref.current);
   const [pull, setPull] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
   const startY = useRef(0);
@@ -52,4 +53,6 @@ export default function PullToRefresh({ children, onRefresh, className }) {
       </div>
     </div>
   );
-}
+});
+
+export default PullToRefresh;

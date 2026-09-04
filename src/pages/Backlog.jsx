@@ -4,7 +4,7 @@ import TaskForm from '@/components/tasks/TaskForm';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Inbox, ArrowUpRight, Trash2, Loader2 } from 'lucide-react';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import MobileSelect from '@/components/ui/mobile-select';
 import { PRIORITY_CONFIG } from '@/lib/taskUtils';
 import { useI18n } from '@/lib/I18nContext';
 
@@ -47,12 +47,12 @@ export default function Backlog() {
 
       <form onSubmit={handleAdd} className="flex gap-2 mb-6">
         <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t('backlog.placeholder')} />
-        <Select value={String(priority)} onValueChange={(v) => setPriority(Number(v))}>
-          <SelectTrigger className="w-20 shrink-0"><SelectValue /></SelectTrigger>
-          <SelectContent>
-            {[1, 2, 3, 4].map((p) => <SelectItem key={p} value={String(p)}>P{p}</SelectItem>)}
-          </SelectContent>
-        </Select>
+        <MobileSelect
+          value={String(priority)}
+          onValueChange={(v) => setPriority(Number(v))}
+          triggerClassName="w-20 shrink-0"
+          options={[1, 2, 3, 4].map((p) => ({ value: String(p), label: `P${p}` }))}
+        />
         <Button type="submit" className="shrink-0"><Inbox className="w-4 h-4 mr-1" /> {t('common.add')}</Button>
       </form>
 
