@@ -2,7 +2,12 @@ import { createContext, useContext, useMemo } from 'react';
 import { useSettings } from '@/lib/SettingsContext';
 import { translate, DATE_LOCALES } from '@/lib/i18n';
 
-const I18nContext = createContext(null);
+const fallback = {
+  lang: 'en',
+  t: (key, params) => translate('en', key, params),
+  dateLocale: DATE_LOCALES.en,
+};
+const I18nContext = createContext(fallback);
 
 export function I18nProvider({ children }) {
   const { settings } = useSettings();
@@ -16,7 +21,5 @@ export function I18nProvider({ children }) {
 }
 
 export function useI18n() {
-  const ctx = useContext(I18nContext);
-  if (!ctx) throw new Error('useI18n must be used within I18nProvider');
-  return ctx;
+  return useContext(I18nContext);
 }
