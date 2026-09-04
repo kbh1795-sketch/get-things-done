@@ -36,6 +36,12 @@ export default function Home() {
       const nextDate = getNextDueDate(task.due_date, task.repeat_frequency);
       const { id, created_date, updated_date, created_by_id, completed, completed_date, ...rest } = task;
       bulkCreateTasks.mutate([{ ...rest, completed: false, completed_date: null, due_date: nextDate }]);
+    } else if (task.completed && task.is_routine && task.repeat_frequency && task.repeat_frequency !== 'none') {
+      // 루틴 완료 해제: 완료 시 생성했던 다음 회차 인스턴스를 함께 삭제하고 원본을 되돌림
+      const nextDate = getNextDueDate(task.due_date, task.repeat_frequency);
+      const spawned = nextDate ? tasks.find((t) => t.id !== task.id && t.title === task.title && !t.completed && t.due_date === nextDate && t.is_routine) : null;
+      if (spawned) deleteTask.mutate(spawned.id);
+      updateTask.mutate({ id: task.id, data: { completed: false, completed_date: null } });
     } else {
       updateTask.mutate({ id: task.id, data: { completed: !task.completed, completed_date: !task.completed ? today : null } });
     }
