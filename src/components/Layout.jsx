@@ -17,7 +17,7 @@ export default function Layout() {
   ];
 
   return (
-    <div className="min-h-screen bg-background flex flex-col md:flex-row">
+    <div className="h-screen bg-background flex flex-col md:flex-row overflow-hidden">
       <aside className="hidden md:flex w-64 flex-col border-r bg-sidebar p-4 gap-1 shrink-0">
         <div className="flex items-center gap-2 px-3 py-4 mb-2">
           <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center">
