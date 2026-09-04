@@ -7,6 +7,7 @@ import { Plus, Loader2 } from 'lucide-react';
 import { BUCKET_ORDER, BUCKET_LABELS, getDateBucket, getNextDueDate } from '@/lib/taskUtils';
 import { useSettings } from '@/lib/SettingsContext';
 import { playCompletionSound } from '@/lib/sound';
+import Pet from '@/components/Pet';
 import { format } from 'date-fns';
 
 export default function Home() {
@@ -86,6 +87,7 @@ export default function Home() {
       )}
 
       <TaskForm open={formOpen} onClose={() => { setFormOpen(false); setEditing(null); }} onSave={handleSave} task={editing} projects={projects} />
+      <Pet />
     </div>
   );
 }

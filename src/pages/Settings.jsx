@@ -4,7 +4,9 @@ import { useAllTasks, useTaskMutations } from '@/hooks/useTaskData';
 import { useAuth } from '@/lib/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
-import { Palette, CalendarClock, Bell, LayoutGrid, Settings as SettingsIcon, Moon, Sun, Monitor, Check, Trash2, Smartphone } from 'lucide-react';
+import { Palette, CalendarClock, Bell, LayoutGrid, Settings as SettingsIcon, Moon, Sun, Monitor, Check, Trash2, Smartphone, Sparkles, Globe } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const THEMES = [
   { value: 'light', label: '라이트', icon: Sun },
@@ -18,6 +20,25 @@ const DATE_FORMATS = [
   { value: 'yyyy. M. d.', label: '2026. 9. 5.' },
   { value: 'M/d/yyyy', label: '9/5/2026' },
   { value: 'MMM d, yyyy', label: 'Sep 5, 2026' },
+];
+
+const PETS = [
+  { value: 'cat', emoji: '🐱' },
+  { value: 'dog', emoji: '🐶' },
+  { value: 'rabbit', emoji: '🐰' },
+  { value: 'bird', emoji: '🐦' },
+  { value: 'panda', emoji: '🐼' },
+  { value: 'fox', emoji: '🦊' },
+];
+
+const LANGUAGES = [
+  { value: 'ko', label: '한국어' },
+  { value: 'en', label: 'English' },
+  { value: 'zh', label: '中文' },
+  { value: 'ja', label: '日本語' },
+  { value: 'fr', label: 'Français' },
+  { value: 'es', label: 'Español' },
+  { value: 'de', label: 'Deutsch' },
 ];
 
 export default function Settings() {
@@ -151,9 +172,44 @@ export default function Settings() {
         </div>
       </Section>
 
+      <Section icon={Sparkles} title="Pet" description="나만의 펫을 설정하세요">
+        <div className="space-y-4">
+          <Row label="펫 활성화" description="앱을 열면 펫이 인사해요">
+            <Switch checked={settings.petEnabled} onCheckedChange={(c) => update('petEnabled', c)} />
+          </Row>
+          <div>
+            <p className="text-sm font-medium mb-2">펫 종류</p>
+            <div className="flex flex-wrap gap-2">
+              {PETS.map((p) => (
+                <button key={p.value} onClick={() => update('petType', p.value)}
+                  className={`w-12 h-12 rounded-xl border-2 text-2xl flex items-center justify-center transition-all ${settings.petType === p.value ? 'border-primary bg-primary/5 scale-110' : 'border-border hover:bg-muted'}`}>
+                  {p.emoji}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div>
+            <p className="text-sm font-medium mb-2">펫 이름</p>
+            <Input value={settings.petName || ''} onChange={(e) => update('petName', e.target.value)} placeholder="이름을 지어주세요" maxLength={12} />
+          </div>
+        </div>
+      </Section>
+
       <Section icon={SettingsIcon} title="General" description="일반 설정">
         <div className="space-y-1">
           <div className="flex items-center justify-between py-3">
+            <div>
+              <p className="text-sm font-medium">언어</p>
+              <p className="text-xs text-muted-foreground">펫 메시지 언어</p>
+            </div>
+            <Select value={settings.language} onValueChange={(v) => update('language', v)}>
+              <SelectTrigger className="w-36"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {LANGUAGES.map((l) => <SelectItem key={l.value} value={l.value}>{l.label}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex items-center justify-between py-3 border-t">
             <div>
               <p className="text-sm font-medium">완료된 할 일 삭제</p>
               <p className="text-xs text-muted-foreground">{completedCount}개 완료됨</p>

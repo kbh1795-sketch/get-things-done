@@ -9,6 +9,10 @@ const DEFAULTS = {
   soundEnabled: true,
   notificationsEnabled: false,
   compactMode: false,
+  petEnabled: true,
+  petType: 'cat',
+  petName: '',
+  language: 'ko',
 };
 
 const SettingsContext = createContext(null);
