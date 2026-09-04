@@ -74,7 +74,7 @@ export default function Pet() {
                 animate={{ y: [0, -7, 0], rotate: [0, -4, 4, 0] }}
                 transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
                 className="text-6xl leading-none"
-                style={{ filter: 'drop-shadow(0 6px 6px rgba(0,0,0,0.25))' }}
+                style={{ filter: settings.petType === 'lemur' ? 'grayscale(1) drop-shadow(0 6px 6px rgba(0,0,0,0.25))' : 'drop-shadow(0 6px 6px rgba(0,0,0,0.25))' }}
               >
                 {PETS[settings.petType] || '🐱'}
               </motion.div>
