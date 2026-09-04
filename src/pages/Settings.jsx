@@ -6,7 +6,7 @@ import { useAllTasks, useTaskMutations } from '@/hooks/useTaskData';
 import { useAuth } from '@/lib/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
-import { Palette, CalendarClock, Bell, LayoutGrid, Settings as SettingsIcon, Moon, Sun, Monitor, Check, Trash2, Smartphone, Sparkles } from 'lucide-react';
+import { Palette, CalendarClock, Bell, LayoutGrid, Settings as SettingsIcon, Moon, Sun, Monitor, Check, Trash2, Smartphone } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
@@ -22,18 +22,6 @@ const DATE_FORMATS = [
   { value: 'yyyy. M. d.', label: '2026. 9. 5.' },
   { value: 'M/d/yyyy', label: '9/5/2026' },
   { value: 'MMM d, yyyy', label: 'Sep 5, 2026' },
-];
-
-const PETS = [
-  { value: 'cat', emoji: '🐱' },
-  { value: 'dog', emoji: '🐶' },
-  { value: 'kangaroo', emoji: '🦘' },
-  { value: 'lemur', emoji: '🐒' },
-  { value: 'quokka', emoji: '🦦' },
-  { value: 'koala', emoji: '🐨' },
-  { value: 'hedgehog', emoji: '🦔' },
-  { value: 'rabbit', emoji: '🐰' },
-  { value: 'masterRabbit', emoji: '🐇' },
 ];
 
 export default function Settings() {
@@ -167,29 +155,6 @@ export default function Settings() {
             <p className="text-xs text-muted-foreground mt-1">{t('settings.widgetRemaining')}</p>
           </div>
           <p className="text-xs text-muted-foreground">{t('settings.widgetHint')}</p>
-        </div>
-      </Section>
-
-      <Section icon={Sparkles} title={t('settings.petTitle')} description={t('settings.petDesc')}>
-        <div className="space-y-4">
-          <Row label={t('settings.petEnable')} description={t('settings.petEnableDesc')}>
-            <Switch checked={settings.petEnabled} onCheckedChange={(c) => update('petEnabled', c)} />
-          </Row>
-          <div>
-            <p className="text-sm font-medium mb-2">{t('settings.petType')}</p>
-            <div className="flex flex-wrap gap-2">
-              {PETS.map((p) => (
-                <button key={p.value} onClick={() => update('petType', p.value)}
-                  className={`w-12 h-12 rounded-xl border-2 text-2xl flex items-center justify-center transition-all ${settings.petType === p.value ? 'border-primary bg-primary/5 scale-110' : 'border-border hover:bg-muted'}`}>
-                  {p.emoji}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div>
-            <p className="text-sm font-medium mb-2">{t('settings.petName')}</p>
-            <Input value={settings.petName || ''} onChange={(e) => update('petName', e.target.value)} placeholder={t('settings.petNamePlaceholder')} maxLength={12} />
-          </div>
         </div>
       </Section>
 

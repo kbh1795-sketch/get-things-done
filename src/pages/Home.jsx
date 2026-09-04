@@ -8,7 +8,6 @@ import { getNextDueDate } from '@/lib/taskUtils';
 import { useSettings } from '@/lib/SettingsContext';
 import { useI18n } from '@/lib/I18nContext';
 import { playCompletionSound } from '@/lib/sound';
-import Pet from '@/components/Pet';
 import { format } from 'date-fns';
 
 export default function Home() {
@@ -99,7 +98,6 @@ export default function Home() {
       )}
 
       <TaskForm open={formOpen} onClose={() => { setFormOpen(false); setEditing(null); }} onSave={handleSave} task={editing} projects={projects} defaultDate={today} />
-      <Pet />
     </div>
   );
 }

@@ -9,9 +9,6 @@ const DEFAULTS = {
   soundEnabled: true,
   notificationsEnabled: false,
   compactMode: false,
-  petEnabled: true,
-  petType: 'cat',
-  petName: '',
   language: 'en',
 };
 
