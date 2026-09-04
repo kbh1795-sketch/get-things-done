@@ -52,7 +52,7 @@ export default function TaskItem({ task, projects, onToggle, onEdit, onDelete, c
       <div className="md:opacity-0 md:group-hover:opacity-100 transition-opacity shrink-0">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="p-2 rounded hover:bg-muted" aria-label={t('common.edit')}><MoreVertical className="w-4 h-4 text-muted-foreground" /></button>
+            <button className="p-2.5 min-w-[44px] min-h-[44px] rounded hover:bg-muted flex items-center justify-center" aria-label={t('common.edit')}><MoreVertical className="w-4 h-4 text-muted-foreground" /></button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             {canEdit && onEdit && <DropdownMenuItem onClick={() => onEdit(task)}><Pencil className="w-4 h-4 mr-2" />{t('common.edit')}</DropdownMenuItem>}

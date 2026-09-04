@@ -118,8 +118,8 @@ export default function Projects() {
                     <h3 className="font-semibold">{p.name}</h3>
                   </div>
                   <div className="flex gap-1" onClick={(e) => e.stopPropagation()}>
-                    <button onClick={() => { setEditing(p); setFormOpen(true); }} aria-label={t('common.edit')} className="p-2 rounded hover:bg-muted"><Pencil className="w-3.5 h-3.5 text-muted-foreground" /></button>
-                    <button onClick={() => handleDelete(p)} aria-label={t('common.delete')} className="p-2 rounded hover:bg-muted"><Trash2 className="w-3.5 h-3.5 text-muted-foreground" /></button>
+                    <button onClick={() => { setEditing(p); setFormOpen(true); }} aria-label={t('common.edit')} className="p-2.5 min-w-[44px] min-h-[44px] rounded hover:bg-muted flex items-center justify-center"><Pencil className="w-3.5 h-3.5 text-muted-foreground" /></button>
+                    <button onClick={() => handleDelete(p)} aria-label={t('common.delete')} className="p-2.5 min-w-[44px] min-h-[44px] rounded hover:bg-muted flex items-center justify-center"><Trash2 className="w-3.5 h-3.5 text-muted-foreground" /></button>
                   </div>
                 </div>
                 {p.description && <p className="text-xs text-muted-foreground mb-3 line-clamp-2">{p.description}</p>}

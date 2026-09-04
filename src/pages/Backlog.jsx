@@ -73,7 +73,7 @@ export default function Backlog() {
                 <span className="flex-1 text-sm font-medium">{task.title}</span>
                 <span className="text-xs text-muted-foreground">P{task.priority}</span>
                 <Button size="sm" variant="outline" onClick={() => handlePromote(task)}><ArrowUpRight className="w-3.5 h-3.5 mr-1" />{t('backlog.promote')}</Button>
-                <button onClick={() => deleteTask.mutate(task.id)} aria-label={t('common.delete')} className="p-2 rounded hover:bg-muted md:opacity-0 md:group-hover:opacity-100"><Trash2 className="w-4 h-4 text-muted-foreground" /></button>
+                <button onClick={() => deleteTask.mutate(task.id)} aria-label={t('common.delete')} className="p-2.5 min-w-[44px] min-h-[44px] rounded hover:bg-muted flex items-center justify-center md:opacity-0 md:group-hover:opacity-100"><Trash2 className="w-4 h-4 text-muted-foreground" /></button>
               </div>
             );
           })}
