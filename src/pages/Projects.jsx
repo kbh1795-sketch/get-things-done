@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useAllTasks, useAllProjects, useProjectMutations, useTaskMutations } from '@/hooks/useTaskData';
 import ProjectForm from '@/components/projects/ProjectForm';
 import TaskItem from '@/components/tasks/TaskItem';
@@ -15,7 +16,9 @@ export default function Projects() {
   const { t } = useI18n();
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState(null);
-  const [selected, setSelected] = useState(null);
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const selected = id ? projects.find((p) => p.id === id) : null;
 
   const handleSave = (data) => {
     if (editing) updateProject.mutate({ id: editing.id, data });
@@ -33,13 +36,30 @@ export default function Projects() {
     updateTask.mutate({ id: task.id, data: { completed: !task.completed, completed_date: !task.completed ? today : null } });
   };
 
-  if (selected) {
+  if (id) {
+    if (!selected) {
+      if (isLoading) {
+        return (
+          <div className="max-w-3xl mx-auto p-4 md:p-8">
+            <div className="flex justify-center py-20"><Loader2 className="w-6 h-6 animate-spin text-muted-foreground" /></div>
+          </div>
+        );
+      }
+      return (
+        <div className="max-w-3xl mx-auto p-4 md:p-8">
+          <button onClick={() => navigate('/projects')} className="hidden md:flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4">
+            <ArrowLeft className="w-4 h-4" /> {t('projects.back')}
+          </button>
+          <p className="text-center text-muted-foreground py-10">{t('projects.notFound')}</p>
+        </div>
+      );
+    }
     const projectTasks = tasks.filter((t) => t.project_id === selected.id);
     const done = projectTasks.filter((t) => t.completed).length;
     const progress = projectTasks.length ? Math.round((done / projectTasks.length) * 100) : 0;
     return (
       <div className="max-w-3xl mx-auto p-4 md:p-8">
-        <button onClick={() => setSelected(null)} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4">
+        <button onClick={() => navigate('/projects')} className="hidden md:flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4">
           <ArrowLeft className="w-4 h-4" /> {t('projects.back')}
         </button>
         <div className="flex items-center gap-3 mb-2">
@@ -91,7 +111,7 @@ export default function Projects() {
             const done = pTasks.filter((t) => t.completed).length;
             const progress = pTasks.length ? Math.round((done / pTasks.length) * 100) : 0;
             return (
-              <div key={p.id} className="rounded-xl border bg-card p-4 cursor-pointer hover:shadow-md transition-shadow" onClick={() => setSelected(p)}>
+              <div key={p.id} className="rounded-xl border bg-card p-4 cursor-pointer hover:shadow-md transition-shadow" onClick={() => navigate(`/projects/${p.id}`)}>
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex items-center gap-2">
                     <div className="w-3 h-3 rounded-full" style={{ backgroundColor: p.color }} />

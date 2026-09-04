@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { Outlet, NavLink, useLocation } from 'react-router-dom';
+import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
 import { useQueryClient } from '@tanstack/react-query';
-import { CheckSquare, FolderKanban, Inbox, LogOut, Target, Settings as SettingsIcon, Award, CalendarDays, ScrollText, BarChart3, MoreHorizontal } from 'lucide-react';
+import { CheckSquare, FolderKanban, Inbox, LogOut, Target, Settings as SettingsIcon, Award, CalendarDays, ScrollText, BarChart3, MoreHorizontal, ChevronLeft } from 'lucide-react';
 import { useI18n } from '@/lib/I18nContext';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
@@ -13,7 +13,23 @@ export default function Layout() {
   const { t } = useI18n();
   const qc = useQueryClient();
   const location = useLocation();
+  const navigate = useNavigate();
   const [moreOpen, setMoreOpen] = useState(false);
+
+  const rootRoutes = ['/', '/schedule', '/projects', '/stats', '/settings', '/charter', '/backlog', '/achievements'];
+  const titleMap = {
+    '/': t('nav.tasks'),
+    '/schedule': t('nav.schedule'),
+    '/projects': t('nav.projects'),
+    '/stats': t('nav.stats'),
+    '/settings': t('nav.settings'),
+    '/charter': t('nav.charter'),
+    '/backlog': t('nav.backlog'),
+    '/achievements': t('nav.achievements'),
+  };
+  const isRoot = rootRoutes.includes(location.pathname);
+  const parentPath = '/' + (location.pathname.split('/')[1] || '');
+  const barTitle = isRoot ? titleMap[location.pathname] : (titleMap[parentPath] || t('app.name'));
 
   const desktopNav = [
     { to: '/', label: t('nav.tasks'), icon: CheckSquare, end: true },
@@ -78,8 +94,25 @@ export default function Layout() {
         </div>
       </aside>
 
-      <main className="flex-1 overflow-hidden">
-        <PullToRefresh className="h-full overflow-y-auto scroll-area" onRefresh={handleRefresh}>
+      <main className="flex-1 overflow-hidden flex flex-col">
+        <header className="md:hidden sticky top-0 z-40 bg-background/95 backdrop-blur border-b pt-safe">
+          <div className="h-14 flex items-center gap-2 px-3">
+            {isRoot ? (
+              <>
+                <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+                  <Target className="w-4 h-4 text-primary-foreground" />
+                </div>
+                <span className="font-heading font-semibold text-base">{barTitle}</span>
+              </>
+            ) : (
+              <button onClick={() => navigate(-1)} aria-label={t('common.back')} className="flex items-center gap-1 text-sm font-medium">
+                <ChevronLeft className="w-5 h-5" />
+                <span>{barTitle}</span>
+              </button>
+            )}
+          </div>
+        </header>
+        <PullToRefresh className="flex-1 overflow-y-auto scroll-area" onRefresh={handleRefresh}>
           <AnimatePresence mode="wait">
             <motion.div
               key={location.pathname}
@@ -100,6 +133,10 @@ export default function Layout() {
           const Icon = item.icon;
           return (
             <NavLink key={item.to} to={item.to} end={item.end} aria-label={item.label}
+              onClick={(e) => {
+                const active = item.to === '/' ? location.pathname === '/' : location.pathname === item.to || location.pathname.startsWith(item.to + '/');
+                if (active && location.pathname !== item.to) { e.preventDefault(); navigate(item.to); }
+              }}
               className={({ isActive }) =>
                 `flex flex-col items-center justify-center gap-1 px-1 rounded-lg text-xs font-medium min-h-[44px] flex-1 ${isActive ? 'text-primary' : 'text-muted-foreground'}`
               }

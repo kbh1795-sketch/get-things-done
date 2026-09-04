@@ -39,6 +39,7 @@ const dictEn = {
   'common.save': 'Save',
   'common.create': 'Create',
   'common.today': 'Today',
+  'common.back': 'Back',
 
   'home.title': 'To-do',
   'home.todayRemaining': 'Today · {n} left',
@@ -107,6 +108,7 @@ const dictEn = {
   'projects.back': 'Project list',
   'projects.completed': '{done}/{total} done',
   'projects.noTasks': 'No tasks in this project',
+  'projects.notFound': 'Project not found',
 
   'projectform.titleEdit': 'Edit project',
   'projectform.titleNew': 'New project',
@@ -242,6 +244,7 @@ const dictKo = {
   'common.save': '저장',
   'common.create': '생성',
   'common.today': '오늘',
+  'common.back': '뒤로',
 
   'home.title': '할 일',
   'home.todayRemaining': '오늘 · {n}개 남았어요',
@@ -310,6 +313,7 @@ const dictKo = {
   'projects.back': '프로젝트 목록',
   'projects.completed': '{done} / {total} 완료',
   'projects.noTasks': '이 프로젝트에 할 일이 없어요',
+  'projects.notFound': '프로젝트를 찾을 수 없어요',
 
   'projectform.titleEdit': '프로젝트 수정',
   'projectform.titleNew': '새 프로젝트',
