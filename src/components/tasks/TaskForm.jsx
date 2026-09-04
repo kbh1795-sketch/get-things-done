@@ -17,7 +17,7 @@ const REPEAT_OPTIONS = [
 
 const EMPTY = { title: '', description: '', due_date: '', due_time: '', priority: 3, is_routine: false, repeat_frequency: 'daily', project_id: '' };
 
-export default function TaskForm({ open, onClose, onSave, task, projects }) {
+export default function TaskForm({ open, onClose, onSave, task, projects, defaultDate }) {
   const [form, setForm] = useState(EMPTY);
 
   useEffect(() => {
@@ -34,10 +34,10 @@ export default function TaskForm({ open, onClose, onSave, task, projects }) {
           project_id: task.project_id || '',
         });
       } else {
-        setForm(EMPTY);
+        setForm({ ...EMPTY, due_date: defaultDate || '' });
       }
     }
-  }, [task, open]);
+  }, [task, open, defaultDate]);
 
   const handleSubmit = (e) => {
     e?.preventDefault();

@@ -7,7 +7,7 @@ import TaskCountdown from './TaskCountdown';
 import { format, parseISO } from 'date-fns';
 import { ko } from 'date-fns/locale';
 
-export default function TaskItem({ task, projects, onToggle, onEdit, onDelete }) {
+export default function TaskItem({ task, projects, onToggle, onEdit, onDelete, canComplete = true, canEdit = true }) {
   const pri = PRIORITY_CONFIG[task.priority] || PRIORITY_CONFIG[3];
   const project = projects?.find((p) => p.id === task.project_id);
   const { settings } = useSettings();
@@ -19,7 +19,7 @@ export default function TaskItem({ task, projects, onToggle, onEdit, onDelete })
 
   return (
     <div className={`group flex items-start gap-3 p-3 rounded-lg border bg-card hover:shadow-sm transition-shadow ${task.completed ? 'opacity-60' : ''}`}>
-      <Checkbox checked={task.completed} onCheckedChange={() => onToggle(task)} className="mt-1" />
+      <Checkbox checked={task.completed} onCheckedChange={() => canComplete && onToggle?.(task)} disabled={!canComplete} className="mt-1" />
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
           <span className={`w-2 h-2 rounded-full ${pri.dot} shrink-0`} title={`P${task.priority} ${pri.label}`} />
@@ -54,7 +54,7 @@ export default function TaskItem({ task, projects, onToggle, onEdit, onDelete })
             <button className="p-1 rounded hover:bg-muted"><MoreVertical className="w-4 h-4 text-muted-foreground" /></button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => onEdit(task)}><Pencil className="w-4 h-4 mr-2" />수정</DropdownMenuItem>
+            {canEdit && onEdit && <DropdownMenuItem onClick={() => onEdit(task)}><Pencil className="w-4 h-4 mr-2" />수정</DropdownMenuItem>}
             <DropdownMenuItem onClick={() => onDelete(task)} className="text-destructive"><Trash2 className="w-4 h-4 mr-2" />삭제</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

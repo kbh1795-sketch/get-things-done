@@ -13,6 +13,7 @@ import Home from '@/pages/Home';
 import Stats from '@/pages/Stats';
 import Projects from '@/pages/Projects';
 import Backlog from '@/pages/Backlog';
+import Schedule from '@/pages/Schedule';
 import Settings from '@/pages/Settings';
 import Achievements from '@/pages/Achievements';
 import Login from '@/pages/Login';
@@ -53,6 +54,7 @@ const AuthenticatedApp = () => {
       <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
+          <Route path="/schedule" element={<Schedule />} />
           <Route path="/stats" element={<Stats />} />
           <Route path="/achievements" element={<Achievements />} />
           <Route path="/projects" element={<Projects />} />
