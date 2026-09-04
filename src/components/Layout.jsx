@@ -1,11 +1,12 @@
 import { Outlet, NavLink } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
-import { CheckSquare, BarChart3, FolderKanban, Inbox, LogOut, CalendarCheck, Settings as SettingsIcon } from 'lucide-react';
+import { CheckSquare, BarChart3, FolderKanban, Inbox, LogOut, CalendarCheck, Settings as SettingsIcon, Award } from 'lucide-react';
 import { SettingsProvider } from '@/lib/SettingsContext';
 
 const navItems = [
   { to: '/', label: '할 일', icon: CheckSquare, end: true },
   { to: '/stats', label: '성과', icon: BarChart3 },
+  { to: '/achievements', label: '성취', icon: Award },
   { to: '/projects', label: '프로젝트', icon: FolderKanban },
   { to: '/backlog', label: '백로그', icon: Inbox },
   { to: '/settings', label: '설정', icon: SettingsIcon },
