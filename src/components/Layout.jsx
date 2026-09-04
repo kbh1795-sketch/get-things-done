@@ -35,6 +35,7 @@ export default function Layout() {
   const isMobile = useIsMobile();
   const scrollRef = useRef(null);
   const tabPath = useRef({});
+  const tabHistory = useRef({});
   const tabScroll = useRef({});
   const prevTab = useRef(null);
 
@@ -45,10 +46,16 @@ export default function Layout() {
 
   useEffect(() => {
     const tab = getTab(location.pathname);
-    if (tab) tabPath.current[tab] = location.pathname;
-    if (isMobile && prevTab.current && prevTab.current !== tab && scrollRef.current && tabScroll.current[tab] != null) {
-      const top = tabScroll.current[tab];
-      setTimeout(() => { if (scrollRef.current) scrollRef.current.scrollTop = top; }, 260);
+    if (tab) {
+      const hist = tabHistory.current[tab] || [];
+      if (hist[hist.length - 1] !== location.pathname) {
+        tabHistory.current[tab] = [...hist, location.pathname].slice(-30);
+      }
+      tabPath.current[tab] = location.pathname;
+      if (isMobile && prevTab.current && prevTab.current !== tab && scrollRef.current && tabScroll.current[tab] != null) {
+        const top = tabScroll.current[tab];
+        setTimeout(() => { if (scrollRef.current) scrollRef.current.scrollTop = top; }, 260);
+      }
     }
     prevTab.current = tab;
   }, [location.pathname, isMobile]);
@@ -76,6 +83,19 @@ export default function Layout() {
     { to: '/backlog', label: t('nav.backlog'), icon: Inbox },
     { to: '/achievements', label: t('nav.achievements'), icon: Award },
   ];
+
+  const handleBack = () => {
+    const tab = getTab(location.pathname);
+    const hist = tab ? tabHistory.current[tab] : null;
+    if (hist && hist.length > 1) {
+      hist.pop();
+      tabHistory.current[tab] = hist;
+      tabPath.current[tab] = hist[hist.length - 1];
+      navigate(hist[hist.length - 1]);
+    } else {
+      navigate(-1);
+    }
+  };
 
   const handleRefresh = () => qc.invalidateQueries();
 
@@ -127,7 +147,7 @@ export default function Layout() {
                 <span className="font-heading font-semibold text-base">{barTitle}</span>
               </>
             ) : (
-              <button onClick={() => navigate(-1)} aria-label={t('common.back')} className="flex items-center gap-1 text-sm font-medium">
+              <button onClick={handleBack} aria-label={t('common.back')} className="flex items-center gap-1 text-sm font-medium">
                 <ChevronLeft className="w-5 h-5" />
                 <span>{barTitle}</span>
               </button>
@@ -158,11 +178,16 @@ export default function Layout() {
               onClick={(e) => {
                 const currentTab = getTab(location.pathname);
                 if (currentTab === item.to) {
-                  if (location.pathname !== item.to) { e.preventDefault(); navigate(item.to); }
+                  e.preventDefault();
+                  tabHistory.current[item.to] = [item.to];
+                  tabPath.current[item.to] = item.to;
+                  if (location.pathname !== item.to) navigate(item.to);
                 } else {
                   e.preventDefault();
                   if (isMobile && scrollRef.current && currentTab) tabScroll.current[currentTab] = scrollRef.current.scrollTop;
-                  navigate(tabPath.current[item.to] || item.to);
+                  const hist = tabHistory.current[item.to];
+                  const dest = (hist && hist.length) ? hist[hist.length - 1] : item.to;
+                  navigate(dest);
                 }
               }}
               className={({ isActive }) =>
@@ -189,7 +214,17 @@ export default function Layout() {
               {moreNav.map((item) => {
                 const Icon = item.icon;
                 return (
-                  <NavLink key={item.to} to={item.to} onClick={() => setMoreOpen(false)} aria-label={item.label}
+                  <NavLink key={item.to} to={item.to} onClick={(e) => {
+                    const currentTab = getTab(location.pathname);
+                    if (currentTab !== item.to) {
+                      e.preventDefault();
+                      if (isMobile && scrollRef.current && currentTab) tabScroll.current[currentTab] = scrollRef.current.scrollTop;
+                      const hist = tabHistory.current[item.to];
+                      const dest = (hist && hist.length) ? hist[hist.length - 1] : item.to;
+                      navigate(dest);
+                    }
+                    setMoreOpen(false);
+                  }} aria-label={item.label}
                     className="flex flex-col items-center gap-2 p-4 rounded-xl border hover:bg-muted min-h-[44px]">
                     <Icon className="w-6 h-6" />
                     <span className="text-xs font-medium">{item.label}</span>
