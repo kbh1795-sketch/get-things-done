@@ -1,6 +1,6 @@
 import { Outlet, NavLink } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
-import { CheckSquare, BarChart3, FolderKanban, Inbox, LogOut, CalendarCheck, Settings as SettingsIcon, Award, CalendarDays } from 'lucide-react';
+import { CheckSquare, BarChart3, FolderKanban, Inbox, LogOut, Target, Settings as SettingsIcon, Award, CalendarDays } from 'lucide-react';
 import { useI18n } from '@/lib/I18nContext';
 
 export default function Layout() {
@@ -21,7 +21,7 @@ export default function Layout() {
       <aside className="hidden md:flex w-64 flex-col border-r bg-sidebar p-4 gap-1 shrink-0">
         <div className="flex items-center gap-2 px-3 py-4 mb-2">
           <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center">
-            <CalendarCheck className="w-5 h-5 text-primary-foreground" />
+            <Target className="w-5 h-5 text-primary-foreground" />
           </div>
           <span className="font-heading font-semibold text-lg">{t('app.name')}</span>
         </div>
