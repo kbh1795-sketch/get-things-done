@@ -62,15 +62,15 @@ export default function Backlog() {
         </div>
       ) : (
         <div className="space-y-2">
-          {backlogTasks.map((t) => {
-            const pri = PRIORITY_CONFIG[t.priority] || PRIORITY_CONFIG[3];
+          {backlogTasks.map((task) => {
+            const pri = PRIORITY_CONFIG[task.priority] || PRIORITY_CONFIG[3];
             return (
-              <div key={t.id} className="group flex items-center gap-3 p-3 rounded-lg border bg-card hover:shadow-sm">
+              <div key={task.id} className="group flex items-center gap-3 p-3 rounded-lg border bg-card hover:shadow-sm">
                 <span className={`w-2 h-2 rounded-full ${pri.dot} shrink-0`} />
-                <span className="flex-1 text-sm font-medium">{t.title}</span>
-                <span className="text-[10px] text-muted-foreground">P{t.priority}</span>
-                <Button size="sm" variant="outline" onClick={() => handlePromote(t)}><ArrowUpRight className="w-3.5 h-3.5 mr-1" />{t('backlog.promote')}</Button>
-                <button onClick={() => deleteTask.mutate(t.id)} className="p-1 rounded hover:bg-muted opacity-0 group-hover:opacity-100"><Trash2 className="w-4 h-4 text-muted-foreground" /></button>
+                <span className="flex-1 text-sm font-medium">{task.title}</span>
+                <span className="text-[10px] text-muted-foreground">P{task.priority}</span>
+                <Button size="sm" variant="outline" onClick={() => handlePromote(task)}><ArrowUpRight className="w-3.5 h-3.5 mr-1" />{t('backlog.promote')}</Button>
+                <button onClick={() => deleteTask.mutate(task.id)} className="p-1 rounded hover:bg-muted opacity-0 group-hover:opacity-100"><Trash2 className="w-4 h-4 text-muted-foreground" /></button>
               </div>
             );
           })}
