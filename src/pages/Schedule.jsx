@@ -3,11 +3,11 @@ import { useAllTasks, useAllProjects, useTaskMutations } from '@/hooks/useTaskDa
 import TaskForm from '@/components/tasks/TaskForm';
 import TaskItem from '@/components/tasks/TaskItem';
 import { Button } from '@/components/ui/button';
-import { Plus, Loader2, ChevronLeft, ChevronRight, CalendarDays } from 'lucide-react';
+import { Plus, Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { getNextDueDate } from '@/lib/taskUtils';
 import { useSettings } from '@/lib/SettingsContext';
 import { playCompletionSound } from '@/lib/sound';
-import { format, parseISO, addDays, isToday } from 'date-fns';
+import { format, parseISO, addDays, isToday, startOfWeek, differenceInDays } from 'date-fns';
 import { ko } from 'date-fns/locale';
 
 export default function Schedule() {
@@ -24,7 +24,13 @@ export default function Schedule() {
   const uncompleted = dayTasks.filter((t) => !t.completed);
   const completed = dayTasks.filter((t) => t.completed);
 
-  const shiftDay = (delta) => setSelectedDate(format(addDays(parseISO(selectedDate), delta), 'yyyy-MM-dd'));
+  const weekStartsOn = settings.weekStart ?? 1;
+  const weekStart = startOfWeek(parseISO(selectedDate), { weekStartsOn });
+  const weekDays = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
+  const shiftWeek = (delta) => {
+    const offset = differenceInDays(parseISO(selectedDate), weekStart);
+    setSelectedDate(format(addDays(addDays(weekStart, delta * 7), offset), 'yyyy-MM-dd'));
+  };
 
   const handleSave = (data) => {
     const payload = { ...data, due_date: data.due_date || selectedDate };
@@ -73,17 +79,34 @@ export default function Schedule() {
         </Button>
       </div>
 
-      <div className="flex items-center gap-2 mb-4 p-2 rounded-lg border bg-card">
-        <Button variant="ghost" size="icon" onClick={() => shiftDay(-1)}><ChevronLeft className="w-4 h-4" /></Button>
-        <div className="flex-1 flex items-center gap-2 justify-center">
-          <CalendarDays className="w-4 h-4 text-muted-foreground" />
-          <input type="date" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)}
-            className="bg-transparent text-sm font-medium border-0 focus:outline-none cursor-pointer" />
-          {!isTodaySelected && (
-            <Button variant="outline" size="sm" onClick={() => setSelectedDate(format(new Date(), 'yyyy-MM-dd'))}>오늘</Button>
-          )}
+      <div className="mb-4">
+        <div className="flex items-center justify-between mb-2">
+          <Button variant="ghost" size="icon" onClick={() => shiftWeek(-1)}><ChevronLeft className="w-4 h-4" /></Button>
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium">{format(weekStart, 'yyyy년 M월', { locale: ko })}</span>
+            {!isTodaySelected && (
+              <Button variant="outline" size="sm" onClick={() => setSelectedDate(format(new Date(), 'yyyy-MM-dd'))}>오늘</Button>
+            )}
+          </div>
+          <Button variant="ghost" size="icon" onClick={() => shiftWeek(1)}><ChevronRight className="w-4 h-4" /></Button>
         </div>
-        <Button variant="ghost" size="icon" onClick={() => shiftDay(1)}><ChevronRight className="w-4 h-4" /></Button>
+        <div className="grid grid-cols-7 gap-1">
+          {weekDays.map((d) => {
+            const ds = format(d, 'yyyy-MM-dd');
+            const selected = ds === selectedDate;
+            const today = isToday(d);
+            return (
+              <button key={ds} onClick={() => setSelectedDate(ds)}
+                className={`flex flex-col items-center gap-0.5 py-2 rounded-lg border text-sm transition-colors ${
+                  selected ? 'bg-primary text-primary-foreground border-primary' : 'border-border hover:bg-muted'
+                }`}>
+                <span className="text-[10px]">{format(d, 'E', { locale: ko })}</span>
+                <span className="font-medium">{format(d, 'd')}</span>
+                <span className={`w-1 h-1 rounded-full ${today ? (selected ? 'bg-primary-foreground' : 'bg-primary') : 'bg-transparent'}`} />
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {!isTodaySelected && (
