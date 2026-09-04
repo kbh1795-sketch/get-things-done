@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useAllTasks, useAllProjects, useTaskMutations } from '@/hooks/useTaskData';
 import TaskForm from '@/components/tasks/TaskForm';
 import TaskItem from '@/components/tasks/TaskItem';
+import GoogleCalendarEvents from '@/components/GoogleCalendarEvents';
 import { Button } from '@/components/ui/button';
 import { Plus, Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { getNextDueDate } from '@/lib/taskUtils';
@@ -148,6 +149,8 @@ export default function Schedule() {
           )}
         </div>
       )}
+
+      <GoogleCalendarEvents selectedDate={selectedDate} />
 
       <TaskForm open={formOpen} onClose={() => { setFormOpen(false); setEditing(null); }} onSave={handleSave} task={editing} projects={projects} defaultDate={selectedDate} />
     </div>
