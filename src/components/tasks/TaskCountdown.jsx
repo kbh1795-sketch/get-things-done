@@ -26,7 +26,7 @@ export default function TaskCountdown({ dueDate, dueTime }) {
   else label = t('countdown.minSec', { m: mins, s: secs });
 
   return (
-    <span className={`inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full ${overdue ? 'bg-red-100 text-red-700' : 'bg-red-50 text-red-600'}`}>
+    <span className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full ${overdue ? 'bg-red-100 text-red-700' : 'bg-red-50 text-red-600'}`}>
       {overdue ? <AlertTriangle className="w-3 h-3" /> : <Timer className="w-3 h-3" />}
       {overdue ? `${t('countdown.overdue')} ${label}` : `${t('countdown.due')}${label}`}
     </span>

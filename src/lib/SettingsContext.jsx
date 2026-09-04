@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 
 const DEFAULTS = {
-  theme: 'light',
+  theme: 'system',
   accent: null,
   dateFormat: 'yyyy. M. d.',
   timeFormat: '24h',

@@ -9,6 +9,9 @@ import { Switch } from '@/components/ui/switch';
 import { Palette, CalendarClock, Bell, LayoutGrid, Settings as SettingsIcon, Moon, Sun, Monitor, Check, Trash2, Smartphone } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useNavigate } from 'react-router-dom';
+import { base44 } from '@/api/base44Client';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 
 const THEMES = [
   { value: 'light', icon: Sun, tkey: 'settings.themeLight' },
@@ -31,6 +34,8 @@ export default function Settings() {
   const { data: tasks = [] } = useAllTasks();
   const { deleteCompleted } = useTaskMutations();
   const [notifStatus, setNotifStatus] = useState(typeof Notification !== 'undefined' ? Notification.permission : 'unsupported');
+  const [deleting, setDeleting] = useState(false);
+  const navigate = useNavigate();
 
   const completedCount = tasks.filter((t) => t.completed).length;
   const remainingToday = tasks.filter((t) => !t.completed && !t.is_backlog).length;
@@ -52,6 +57,19 @@ export default function Settings() {
   };
 
   const notifStatusLabel = notifStatus === 'granted' ? t('settings.notifGranted') : notifStatus === 'denied' ? t('settings.notifDenied') : t('settings.notifUnset');
+
+  const handleDeleteAccount = async () => {
+    setDeleting(true);
+    try {
+      await base44.entities.Task.deleteMany({ created_by_id: user.id });
+      await base44.entities.Project.deleteMany({ created_by_id: user.id });
+      await base44.entities.Charter.deleteMany({ created_by_id: user.id });
+      await base44.auth.logout();
+      navigate('/login');
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   return (
     <div className="max-w-2xl mx-auto p-4 md:p-8 space-y-6 pb-24 md:pb-8">
@@ -189,6 +207,28 @@ export default function Settings() {
             <Smartphone className="w-4 h-4 text-muted-foreground" />
           </div>
         </div>
+      </Section>
+
+      <Section icon={Trash2} title={t('settings.deleteAccount')} description={t('settings.deleteAccountDesc')}>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="destructive" disabled={deleting}>
+              <Trash2 className="w-4 h-4 mr-1" /> {deleting ? t('settings.deleting') : t('settings.deleteAccountBtn')}
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>{t('settings.deleteAccountConfirm')}</AlertDialogTitle>
+              <AlertDialogDescription>{t('settings.deleteAccountWarning')}</AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+              <AlertDialogAction onClick={handleDeleteAccount} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                {t('settings.deleteAccountBtn')}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </Section>
     </div>
   );

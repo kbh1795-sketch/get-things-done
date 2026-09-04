@@ -104,7 +104,7 @@ export default function Achievements() {
                     <div className="h-1.5 rounded-full bg-muted overflow-hidden mt-2">
                       <div className="h-full bg-primary rounded-full" style={{ width: `${mp}%` }} />
                     </div>
-                    <p className="text-[10px] text-muted-foreground mt-1">{value}/{m.threshold}</p>
+                    <p className="text-xs text-muted-foreground mt-1">{value}/{m.threshold}</p>
                   </>
                 )}
               </div>

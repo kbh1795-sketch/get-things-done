@@ -83,14 +83,14 @@ export default function Schedule() {
 
       <div className="mb-4">
         <div className="flex items-center justify-between mb-2">
-          <Button variant="ghost" size="icon" onClick={() => shiftWeek(-1)}><ChevronLeft className="w-4 h-4" /></Button>
+          <Button variant="ghost" size="icon" aria-label="previous week" onClick={() => shiftWeek(-1)}><ChevronLeft className="w-4 h-4" /></Button>
           <div className="flex items-center gap-2">
             <span className="text-sm font-medium">{format(weekStart, 'yyyy. M.', { locale: dateLocale })}</span>
             {!isTodaySelected && (
               <Button variant="outline" size="sm" onClick={() => setSelectedDate(format(new Date(), 'yyyy-MM-dd'))}>{t('common.today')}</Button>
             )}
           </div>
-          <Button variant="ghost" size="icon" onClick={() => shiftWeek(1)}><ChevronRight className="w-4 h-4" /></Button>
+          <Button variant="ghost" size="icon" aria-label="next week" onClick={() => shiftWeek(1)}><ChevronRight className="w-4 h-4" /></Button>
         </div>
         <div className="grid grid-cols-7 gap-1">
           {weekDays.map((d) => {
@@ -102,7 +102,7 @@ export default function Schedule() {
                 className={`flex flex-col items-center gap-0.5 py-2 rounded-lg border text-sm transition-colors ${
                   selected ? 'bg-primary text-primary-foreground border-primary' : 'border-border hover:bg-muted'
                 }`}>
-                <span className="text-[10px]">{format(d, 'E', { locale: dateLocale })}</span>
+                <span className="text-xs">{format(d, 'E', { locale: dateLocale })}</span>
                 <span className="font-medium">{format(d, 'd')}</span>
                 <span className={`w-1 h-1 rounded-full ${today ? (selected ? 'bg-primary-foreground' : 'bg-primary') : 'bg-transparent'}`} />
               </button>

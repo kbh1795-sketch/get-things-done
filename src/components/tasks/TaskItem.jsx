@@ -28,12 +28,12 @@ export default function TaskItem({ task, projects, onToggle, onEdit, onDelete, c
             {task.title}
           </span>
           {task.is_routine && (
-            <span className="inline-flex items-center gap-0.5 text-[10px] text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded-full">
+            <span className="inline-flex items-center gap-0.5 text-xs text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded-full">
               <Repeat2 className="w-3 h-3" /> {t('repeat.' + task.repeat_frequency)}
             </span>
           )}
           {project && (
-            <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-full"
+            <span className="inline-flex items-center gap-1 text-xs px-1.5 py-0.5 rounded-full"
               style={{ color: project.color, backgroundColor: project.color + '15' }}>
               <Folder className="w-3 h-3" /> {project.name}
             </span>
@@ -49,10 +49,10 @@ export default function TaskItem({ task, projects, onToggle, onEdit, onDelete, c
         )}
         {task.description && <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{task.description}</p>}
       </div>
-      <div className="opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+      <div className="md:opacity-0 md:group-hover:opacity-100 transition-opacity shrink-0">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="p-1 rounded hover:bg-muted"><MoreVertical className="w-4 h-4 text-muted-foreground" /></button>
+            <button className="p-2 rounded hover:bg-muted" aria-label={t('common.edit')}><MoreVertical className="w-4 h-4 text-muted-foreground" /></button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             {canEdit && onEdit && <DropdownMenuItem onClick={() => onEdit(task)}><Pencil className="w-4 h-4 mr-2" />{t('common.edit')}</DropdownMenuItem>}

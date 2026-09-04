@@ -83,7 +83,7 @@ export default function TaskForm({ open, onClose, onSave, task, projects, defaul
                   }`}>
                   <span className={`w-3 h-3 rounded-full ${p.dot}`} />
                   <span className="text-xs font-medium">P{p.value}</span>
-                  <span className="text-[10px]">{t('priority.' + p.value)}</span>
+                  <span className="text-xs">{t('priority.' + p.value)}</span>
                 </button>
               ))}
             </div>

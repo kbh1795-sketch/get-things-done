@@ -12,13 +12,14 @@ import { SettingsProvider } from '@/lib/SettingsContext';
 import { I18nProvider } from '@/lib/I18nContext';
 import Layout from '@/components/Layout';
 import Home from '@/pages/Home';
-import Stats from '@/pages/Stats';
-import Projects from '@/pages/Projects';
-import Backlog from '@/pages/Backlog';
-import Charter from '@/pages/Charter';
 import Schedule from '@/pages/Schedule';
 import Settings from '@/pages/Settings';
-import Achievements from '@/pages/Achievements';
+import { lazy, Suspense } from 'react';
+const Stats = lazy(() => import('@/pages/Stats'));
+const Projects = lazy(() => import('@/pages/Projects'));
+const Backlog = lazy(() => import('@/pages/Backlog'));
+const Charter = lazy(() => import('@/pages/Charter'));
+const Achievements = lazy(() => import('@/pages/Achievements'));
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
 import ForgotPassword from '@/pages/ForgotPassword';
@@ -49,6 +50,7 @@ const AuthenticatedApp = () => {
 
   // Render the main app
   return (
+    <Suspense fallback={<div className="fixed inset-0 flex items-center justify-center"><div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div></div>}>
     <Routes>
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
@@ -68,6 +70,7 @@ const AuthenticatedApp = () => {
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
+    </Suspense>
   );
 };
 

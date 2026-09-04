@@ -88,5 +88,20 @@
 
   body {
     @apply bg-background text-foreground font-body;
+    overscroll-behavior: none;
+  }
+
+  button, a, nav, [role="button"], svg {
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  textarea, input, .markdown-body, .selectable {
+    user-select: text;
+    -webkit-user-select: text;
   }
 }
+
+.pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+.pt-safe { padding-top: env(safe-area-inset-top); }
+.scroll-area { overscroll-behavior-y: none; }

@@ -4,6 +4,7 @@ import TaskForm from '@/components/tasks/TaskForm';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Inbox, ArrowUpRight, Trash2, Loader2 } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { PRIORITY_CONFIG } from '@/lib/taskUtils';
 import { useI18n } from '@/lib/I18nContext';
 
@@ -46,10 +47,12 @@ export default function Backlog() {
 
       <form onSubmit={handleAdd} className="flex gap-2 mb-6">
         <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t('backlog.placeholder')} />
-        <select value={priority} onChange={(e) => setPriority(Number(e.target.value))}
-          className="rounded-md border border-input bg-transparent px-2 text-sm shrink-0">
-          {[1, 2, 3, 4].map((p) => <option key={p} value={p}>P{p}</option>)}
-        </select>
+        <Select value={String(priority)} onValueChange={(v) => setPriority(Number(v))}>
+          <SelectTrigger className="w-20 shrink-0"><SelectValue /></SelectTrigger>
+          <SelectContent>
+            {[1, 2, 3, 4].map((p) => <SelectItem key={p} value={String(p)}>P{p}</SelectItem>)}
+          </SelectContent>
+        </Select>
         <Button type="submit" className="shrink-0"><Inbox className="w-4 h-4 mr-1" /> {t('common.add')}</Button>
       </form>
 
@@ -68,9 +71,9 @@ export default function Backlog() {
               <div key={task.id} className="group flex items-center gap-3 p-3 rounded-lg border bg-card hover:shadow-sm">
                 <span className={`w-2 h-2 rounded-full ${pri.dot} shrink-0`} />
                 <span className="flex-1 text-sm font-medium">{task.title}</span>
-                <span className="text-[10px] text-muted-foreground">P{task.priority}</span>
+                <span className="text-xs text-muted-foreground">P{task.priority}</span>
                 <Button size="sm" variant="outline" onClick={() => handlePromote(task)}><ArrowUpRight className="w-3.5 h-3.5 mr-1" />{t('backlog.promote')}</Button>
-                <button onClick={() => deleteTask.mutate(task.id)} className="p-1 rounded hover:bg-muted opacity-0 group-hover:opacity-100"><Trash2 className="w-4 h-4 text-muted-foreground" /></button>
+                <button onClick={() => deleteTask.mutate(task.id)} aria-label={t('common.delete')} className="p-2 rounded hover:bg-muted md:opacity-0 md:group-hover:opacity-100"><Trash2 className="w-4 h-4 text-muted-foreground" /></button>
               </div>
             );
           })}
