@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Timer, AlertTriangle } from 'lucide-react';
+import { useI18n } from '@/lib/I18nContext';
 
 export default function TaskCountdown({ dueDate, dueTime }) {
+  const { t } = useI18n();
   const [now, setNow] = useState(new Date());
   useEffect(() => {
     const id = setInterval(() => setNow(new Date()), 1000);
@@ -19,14 +21,14 @@ export default function TaskCountdown({ dueDate, dueTime }) {
   const secs = Math.floor((abs % 60000) / 1000);
 
   let label;
-  if (days > 0) label = `${days}일 ${hours}시간`;
-  else if (hours > 0) label = `${hours}시간 ${mins}분`;
-  else label = `${mins}분 ${secs}초`;
+  if (days > 0) label = t('countdown.dayHour', { d: days, h: hours });
+  else if (hours > 0) label = t('countdown.hourMin', { h: hours, m: mins });
+  else label = t('countdown.minSec', { m: mins, s: secs });
 
   return (
     <span className={`inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full ${overdue ? 'bg-red-100 text-red-700' : 'bg-red-50 text-red-600'}`}>
       {overdue ? <AlertTriangle className="w-3 h-3" /> : <Timer className="w-3 h-3" />}
-      {overdue ? `지연 ${label}` : `D-${label}`}
+      {overdue ? `${t('countdown.overdue')} ${label}` : `${t('countdown.due')}${label}`}
     </span>
   );
 }

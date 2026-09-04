@@ -7,15 +7,16 @@ import { Button } from '@/components/ui/button';
 import { Plus, Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { getNextDueDate } from '@/lib/taskUtils';
 import { useSettings } from '@/lib/SettingsContext';
+import { useI18n } from '@/lib/I18nContext';
 import { playCompletionSound } from '@/lib/sound';
 import { format, parseISO, addDays, isToday, startOfWeek, differenceInDays } from 'date-fns';
-import { ko } from 'date-fns/locale';
 
 export default function Schedule() {
   const { data: tasks = [], isLoading } = useAllTasks();
   const { data: projects = [] } = useAllProjects();
   const { createTask, updateTask, deleteTask, bulkCreateTasks } = useTaskMutations();
   const { settings } = useSettings();
+  const { t, dateLocale } = useI18n();
   const [selectedDate, setSelectedDate] = useState(format(new Date(), 'yyyy-MM-dd'));
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState(null);
@@ -61,22 +62,22 @@ export default function Schedule() {
   };
 
   const handleDelete = (task) => {
-    if (confirm('이 할 일을 삭제하시겠습니까?')) deleteTask.mutate(task.id);
+    if (confirm(t('task.deleteConfirm'))) deleteTask.mutate(task.id);
   };
 
   const dateLabel = () => {
-    try { return format(parseISO(selectedDate), 'yyyy년 M월 d일 EEEE', { locale: ko }); } catch { return selectedDate; }
+    try { return format(parseISO(selectedDate), 'PPP EEEE', { locale: dateLocale }); } catch { return selectedDate; }
   };
 
   return (
     <div className="max-w-3xl mx-auto p-4 md:p-8">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-heading font-bold">일정</h1>
-          <p className="text-sm text-muted-foreground">{isTodaySelected ? '오늘' : dateLabel()} · {uncompleted.length}개</p>
+          <h1 className="text-2xl font-heading font-bold">{t('schedule.title')}</h1>
+          <p className="text-sm text-muted-foreground">{isTodaySelected ? t('common.today') : dateLabel()} · {t('schedule.count', { n: uncompleted.length })}</p>
         </div>
         <Button onClick={() => { setEditing(null); setFormOpen(true); }}>
-          <Plus className="w-4 h-4 mr-1" /> 추가
+          <Plus className="w-4 h-4 mr-1" /> {t('schedule.add')}
         </Button>
       </div>
 
@@ -84,9 +85,9 @@ export default function Schedule() {
         <div className="flex items-center justify-between mb-2">
           <Button variant="ghost" size="icon" onClick={() => shiftWeek(-1)}><ChevronLeft className="w-4 h-4" /></Button>
           <div className="flex items-center gap-2">
-            <span className="text-sm font-medium">{format(weekStart, 'yyyy년 M월', { locale: ko })}</span>
+            <span className="text-sm font-medium">{format(weekStart, 'yyyy. M.', { locale: dateLocale })}</span>
             {!isTodaySelected && (
-              <Button variant="outline" size="sm" onClick={() => setSelectedDate(format(new Date(), 'yyyy-MM-dd'))}>오늘</Button>
+              <Button variant="outline" size="sm" onClick={() => setSelectedDate(format(new Date(), 'yyyy-MM-dd'))}>{t('common.today')}</Button>
             )}
           </div>
           <Button variant="ghost" size="icon" onClick={() => shiftWeek(1)}><ChevronRight className="w-4 h-4" /></Button>
@@ -101,7 +102,7 @@ export default function Schedule() {
                 className={`flex flex-col items-center gap-0.5 py-2 rounded-lg border text-sm transition-colors ${
                   selected ? 'bg-primary text-primary-foreground border-primary' : 'border-border hover:bg-muted'
                 }`}>
-                <span className="text-[10px]">{format(d, 'E', { locale: ko })}</span>
+                <span className="text-[10px]">{format(d, 'E', { locale: dateLocale })}</span>
                 <span className="font-medium">{format(d, 'd')}</span>
                 <span className={`w-1 h-1 rounded-full ${today ? (selected ? 'bg-primary-foreground' : 'bg-primary') : 'bg-transparent'}`} />
               </button>
@@ -111,14 +112,14 @@ export default function Schedule() {
       </div>
 
       {!isTodaySelected && (
-        <p className="text-xs text-amber-600 mb-3">선택한 날짜는 조회·추가·삭제만 가능합니다 (완료 처리 불가).</p>
+        <p className="text-xs text-amber-600 mb-3">{t('schedule.readOnlyHint')}</p>
       )}
 
       {isLoading ? (
         <div className="flex justify-center py-20"><Loader2 className="w-6 h-6 animate-spin text-muted-foreground" /></div>
       ) : dayTasks.length === 0 ? (
         <div className="text-center py-20 text-muted-foreground">
-          <p className="text-lg mb-2">이 날의 할 일이 없어요</p>
+          <p className="text-lg mb-2">{t('schedule.empty')}</p>
         </div>
       ) : (
         <div className="space-y-6">
@@ -134,7 +135,7 @@ export default function Schedule() {
           </div>
           {completed.length > 0 && (
             <div>
-              <h2 className="text-sm font-semibold text-muted-foreground mb-2 px-1">완료됨 · {completed.length}</h2>
+              <h2 className="text-sm font-semibold text-muted-foreground mb-2 px-1">{t('home.completed', { n: completed.length })}</h2>
               <div className="space-y-2">
                 {completed.map((t) => (
                   <TaskItem key={t.id} task={t} projects={projects}

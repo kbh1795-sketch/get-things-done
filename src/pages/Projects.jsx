@@ -4,6 +4,7 @@ import ProjectForm from '@/components/projects/ProjectForm';
 import TaskItem from '@/components/tasks/TaskItem';
 import { Button } from '@/components/ui/button';
 import { Plus, Folder, Pencil, Trash2, ArrowLeft, Loader2 } from 'lucide-react';
+import { useI18n } from '@/lib/I18nContext';
 import { format } from 'date-fns';
 
 export default function Projects() {
@@ -11,6 +12,7 @@ export default function Projects() {
   const { data: tasks = [] } = useAllTasks();
   const { createProject, updateProject, deleteProject } = useProjectMutations();
   const { updateTask, deleteTask } = useTaskMutations();
+  const { t } = useI18n();
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState(null);
   const [selected, setSelected] = useState(null);
@@ -23,7 +25,7 @@ export default function Projects() {
   };
 
   const handleDelete = (project) => {
-    if (confirm(`"${project.name}" 프로젝트를 삭제하시겠습니까?`)) deleteProject.mutate(project.id);
+    if (confirm(t('projects.deleteConfirm', { name: project.name }))) deleteProject.mutate(project.id);
   };
 
   const handleToggle = (task) => {
@@ -38,7 +40,7 @@ export default function Projects() {
     return (
       <div className="max-w-3xl mx-auto p-4 md:p-8">
         <button onClick={() => setSelected(null)} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4">
-          <ArrowLeft className="w-4 h-4" /> 프로젝트 목록
+          <ArrowLeft className="w-4 h-4" /> {t('projects.back')}
         </button>
         <div className="flex items-center gap-3 mb-2">
           <div className="w-4 h-4 rounded-full" style={{ backgroundColor: selected.color }} />
@@ -47,7 +49,7 @@ export default function Projects() {
         {selected.description && <p className="text-sm text-muted-foreground mb-4">{selected.description}</p>}
         <div className="mb-4">
           <div className="flex justify-between text-xs text-muted-foreground mb-1">
-            <span>{done} / {projectTasks.length} 완료</span>
+            <span>{t('projects.completed', { done, total: projectTasks.length })}</span>
             <span>{progress}%</span>
           </div>
           <div className="h-2 rounded-full bg-muted overflow-hidden">
@@ -56,7 +58,7 @@ export default function Projects() {
         </div>
         <div className="space-y-2">
           {projectTasks.length === 0 ? (
-            <p className="text-center text-muted-foreground py-10 text-sm">이 프로젝트에 할 일이 없어요</p>
+            <p className="text-center text-muted-foreground py-10 text-sm">{t('projects.noTasks')}</p>
           ) : projectTasks.map((t) => (
             <TaskItem key={t.id} task={t} projects={projects} onToggle={handleToggle}
               onDelete={(task) => deleteTask.mutate(task.id)} onEdit={() => {}} />
@@ -70,17 +72,17 @@ export default function Projects() {
     <div className="max-w-3xl mx-auto p-4 md:p-8">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-heading font-bold">프로젝트</h1>
-          <p className="text-sm text-muted-foreground">할 일을 프로젝트로 묶어 관리하세요</p>
+          <h1 className="text-2xl font-heading font-bold">{t('projects.title')}</h1>
+          <p className="text-sm text-muted-foreground">{t('projects.subtitle')}</p>
         </div>
-        <Button onClick={() => { setEditing(null); setFormOpen(true); }}><Plus className="w-4 h-4 mr-1" /> 프로젝트 추가</Button>
+        <Button onClick={() => { setEditing(null); setFormOpen(true); }}><Plus className="w-4 h-4 mr-1" /> {t('projects.add')}</Button>
       </div>
       {isLoading ? (
         <div className="flex justify-center py-20"><Loader2 className="w-6 h-6 animate-spin text-muted-foreground" /></div>
       ) : projects.length === 0 ? (
         <div className="text-center py-20 text-muted-foreground">
           <Folder className="w-12 h-12 mx-auto mb-3 opacity-40" />
-          <p>프로젝트가 없어요</p>
+          <p>{t('projects.empty')}</p>
         </div>
       ) : (
         <div className="grid gap-3 sm:grid-cols-2">

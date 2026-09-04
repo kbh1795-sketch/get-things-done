@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Plus, Loader2 } from 'lucide-react';
 import { getNextDueDate } from '@/lib/taskUtils';
 import { useSettings } from '@/lib/SettingsContext';
+import { useI18n } from '@/lib/I18nContext';
 import { playCompletionSound } from '@/lib/sound';
 import Pet from '@/components/Pet';
 import { format } from 'date-fns';
@@ -15,6 +16,7 @@ export default function Home() {
   const { data: projects = [] } = useAllProjects();
   const { createTask, updateTask, deleteTask, bulkCreateTasks } = useTaskMutations();
   const { settings } = useSettings();
+  const { t } = useI18n();
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState(null);
 
@@ -48,18 +50,18 @@ export default function Home() {
   };
 
   const handleDelete = (task) => {
-    if (confirm('이 할 일을 삭제하시겠습니까?')) deleteTask.mutate(task.id);
+    if (confirm(t('task.deleteConfirm'))) deleteTask.mutate(task.id);
   };
 
   return (
     <div className="max-w-3xl mx-auto p-4 md:p-8">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-heading font-bold">할 일</h1>
-          <p className="text-sm text-muted-foreground">오늘 · {uncompleted.length}개 남았어요</p>
+          <h1 className="text-2xl font-heading font-bold">{t('home.title')}</h1>
+          <p className="text-sm text-muted-foreground">{t('home.todayRemaining', { n: uncompleted.length })}</p>
         </div>
         <Button onClick={() => { setEditing(null); setFormOpen(true); }}>
-          <Plus className="w-4 h-4 mr-1" /> 할 일 추가
+          <Plus className="w-4 h-4 mr-1" /> {t('home.addTask')}
         </Button>
       </div>
 
@@ -67,8 +69,8 @@ export default function Home() {
         <div className="flex justify-center py-20"><Loader2 className="w-6 h-6 animate-spin text-muted-foreground" /></div>
       ) : todayTasks.length === 0 ? (
         <div className="text-center py-20 text-muted-foreground">
-          <p className="text-lg mb-2">오늘 할 일이 없어요</p>
-          <p className="text-sm">새 할 일을 추가하거나 일정 탭에서 다른 날짜를 확인해 보세요</p>
+          <p className="text-lg mb-2">{t('home.empty')}</p>
+          <p className="text-sm">{t('home.emptyHint')}</p>
         </div>
       ) : (
         <div className="space-y-6">
@@ -82,7 +84,7 @@ export default function Home() {
           </div>
           {completed.length > 0 && (
             <div>
-              <h2 className="text-sm font-semibold text-muted-foreground mb-2 px-1">완료됨 · {completed.length}</h2>
+              <h2 className="text-sm font-semibold text-muted-foreground mb-2 px-1">{t('home.completed', { n: completed.length })}</h2>
               <div className="space-y-2">
                 {completed.map((t) => (
                   <TaskItem key={t.id} task={t} projects={projects}

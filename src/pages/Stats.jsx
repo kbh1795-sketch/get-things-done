@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useAllTasks } from '@/hooks/useTaskData';
 import { useSettings } from '@/lib/SettingsContext';
+import { useI18n } from '@/lib/I18nContext';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { Loader2, CheckCircle2, Target, TrendingUp } from 'lucide-react';
 import {
@@ -8,18 +9,18 @@ import {
   eachDayOfInterval, subDays, subWeeks, subMonths, subYears,
   addMonths, addYears, isSameDay,
 } from 'date-fns';
-import { ko } from 'date-fns/locale';
 
-const VIEWS = [
-  { key: 'daily', label: '일간' },
-  { key: 'weekly', label: '주간' },
-  { key: 'monthly', label: '월간' },
-  { key: 'yearly', label: '연간' },
+const VIEW_KEYS = [
+  { key: 'daily', tkey: 'stats.daily' },
+  { key: 'weekly', tkey: 'stats.weekly' },
+  { key: 'monthly', tkey: 'stats.monthly' },
+  { key: 'yearly', tkey: 'stats.yearly' },
 ];
 
 export default function Stats() {
   const { data: tasks = [], isLoading } = useAllTasks();
   const { settings } = useSettings();
+  const { t, dateLocale } = useI18n();
   const [view, setView] = useState('daily');
 
   const completed = tasks.filter((t) => t.completed && t.completed_date);
@@ -29,7 +30,7 @@ export default function Stats() {
     if (view === 'daily') {
       const days = eachDayOfInterval({ start: subDays(now, 6), end: now });
       return days.map((d) => ({
-        label: format(d, 'E', { locale: ko }),
+        label: format(d, 'E', { locale: dateLocale }),
         count: completed.filter((t) => t.completed_date && isSameDay(parseISO(t.completed_date), d)).length,
       }));
     }
@@ -53,7 +54,7 @@ export default function Stats() {
       const months = [];
       for (let i = 11; i >= 0; i--) months.push(startOfMonth(subMonths(now, i)));
       return months.map((m) => ({
-        label: format(m, 'MMM', { locale: ko }),
+        label: format(m, 'MMM', { locale: dateLocale }),
         count: completed.filter((t) => {
           if (!t.completed_date) return false;
           const d = parseISO(t.completed_date);
@@ -82,22 +83,22 @@ export default function Stats() {
 
   return (
     <div className="max-w-4xl mx-auto p-4 md:p-8">
-      <h1 className="text-2xl font-heading font-bold mb-6">성과</h1>
+      <h1 className="text-2xl font-heading font-bold mb-6">{t('stats.title')}</h1>
       {isLoading ? (
         <div className="flex justify-center py-20"><Loader2 className="w-6 h-6 animate-spin text-muted-foreground" /></div>
       ) : (
         <>
           <div className="grid grid-cols-3 gap-3 mb-6">
-            <StatCard icon={CheckCircle2} label="오늘 완료" value={todayCount} color="text-green-600" bg="bg-green-50" />
-            <StatCard icon={Target} label="이번 주" value={thisWeekCount} color="text-blue-600" bg="bg-blue-50" />
-            <StatCard icon={TrendingUp} label="전체 완료" value={completed.length} color="text-purple-600" bg="bg-purple-50" />
+            <StatCard icon={CheckCircle2} label={t('stats.todayDone')} value={todayCount} color="text-green-600" bg="bg-green-50" />
+            <StatCard icon={Target} label={t('stats.thisWeek')} value={thisWeekCount} color="text-blue-600" bg="bg-blue-50" />
+            <StatCard icon={TrendingUp} label={t('stats.totalDone')} value={completed.length} color="text-purple-600" bg="bg-purple-50" />
           </div>
           <div className="rounded-xl border bg-card p-4 md:p-6">
             <div className="flex gap-2 mb-4">
-              {VIEWS.map((v) => (
+              {VIEW_KEYS.map((v) => (
                 <button key={v.key} onClick={() => setView(v.key)}
                   className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${view === v.key ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:bg-muted/70'}`}>
-                  {v.label}
+                  {t(v.tkey)}
                 </button>
               ))}
             </div>
@@ -107,7 +108,7 @@ export default function Stats() {
                 <XAxis dataKey="label" tick={{ fontSize: 12 }} />
                 <YAxis allowDecimals={false} tick={{ fontSize: 12 }} />
                 <Tooltip contentStyle={{ borderRadius: 8, fontSize: 12 }} />
-                <Bar dataKey="count" fill="#6366f1" radius={[6, 6, 0, 0]} name="완료한 할 일" />
+                <Bar dataKey="count" fill="#6366f1" radius={[6, 6, 0, 0]} name={t('stats.barName')} />
               </BarChart>
             </ResponsiveContainer>
           </div>

@@ -1,30 +1,29 @@
 import { Outlet, NavLink } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
 import { CheckSquare, BarChart3, FolderKanban, Inbox, LogOut, CalendarCheck, Settings as SettingsIcon, Award, CalendarDays } from 'lucide-react';
-import { SettingsProvider } from '@/lib/SettingsContext';
-
-const navItems = [
-  { to: '/', label: '할 일', icon: CheckSquare, end: true },
-  { to: '/schedule', label: '일정', icon: CalendarDays },
-  { to: '/stats', label: '성과', icon: BarChart3 },
-  { to: '/achievements', label: '성취', icon: Award },
-  { to: '/projects', label: '프로젝트', icon: FolderKanban },
-  { to: '/backlog', label: '백로그', icon: Inbox },
-  { to: '/settings', label: '설정', icon: SettingsIcon },
-];
+import { useI18n } from '@/lib/I18nContext';
 
 export default function Layout() {
   const { user, logout } = useAuth();
+  const { t } = useI18n();
+  const navItems = [
+    { to: '/', label: t('nav.tasks'), icon: CheckSquare, end: true },
+    { to: '/schedule', label: t('nav.schedule'), icon: CalendarDays },
+    { to: '/stats', label: t('nav.stats'), icon: BarChart3 },
+    { to: '/achievements', label: t('nav.achievements'), icon: Award },
+    { to: '/projects', label: t('nav.projects'), icon: FolderKanban },
+    { to: '/backlog', label: t('nav.backlog'), icon: Inbox },
+    { to: '/settings', label: t('nav.settings'), icon: SettingsIcon },
+  ];
 
   return (
-    <SettingsProvider>
     <div className="min-h-screen bg-background flex flex-col md:flex-row">
       <aside className="hidden md:flex w-64 flex-col border-r bg-sidebar p-4 gap-1 shrink-0">
         <div className="flex items-center gap-2 px-3 py-4 mb-2">
           <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center">
             <CalendarCheck className="w-5 h-5 text-primary-foreground" />
           </div>
-          <span className="font-heading font-semibold text-lg">마이태스크</span>
+          <span className="font-heading font-semibold text-lg">{t('app.name')}</span>
         </div>
         <nav className="flex flex-col gap-1 flex-1">
           {navItems.map((item) => {
@@ -48,11 +47,11 @@ export default function Layout() {
         </nav>
         <div className="border-t pt-3 mt-2">
           <div className="px-3 py-2 mb-1">
-            <p className="text-sm font-medium truncate">{user?.full_name || user?.email || '사용자'}</p>
+            <p className="text-sm font-medium truncate">{user?.full_name || user?.email || t('common.user')}</p>
           </div>
           <button onClick={() => logout()} className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-sidebar-foreground/70 hover:bg-sidebar-accent/50 w-full">
             <LogOut className="w-5 h-5" />
-            로그아웃
+            {t('common.logout')}
           </button>
         </div>
       </aside>
@@ -82,6 +81,5 @@ export default function Layout() {
         })}
       </nav>
     </div>
-    </SettingsProvider>
   );
 }

@@ -1,20 +1,21 @@
 import { Repeat2, Clock, MoreVertical, Pencil, Trash2, Folder } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { PRIORITY_CONFIG, REPEAT_LABELS, formatTime } from '@/lib/taskUtils';
+import { PRIORITY_CONFIG, formatTime } from '@/lib/taskUtils';
 import { useSettings } from '@/lib/SettingsContext';
+import { useI18n } from '@/lib/I18nContext';
 import TaskCountdown from './TaskCountdown';
 import { format, parseISO } from 'date-fns';
-import { ko } from 'date-fns/locale';
 
 export default function TaskItem({ task, projects, onToggle, onEdit, onDelete, canComplete = true, canEdit = true }) {
   const pri = PRIORITY_CONFIG[task.priority] || PRIORITY_CONFIG[3];
   const project = projects?.find((p) => p.id === task.project_id);
   const { settings } = useSettings();
+  const { t, dateLocale } = useI18n();
 
   const dateLabel = () => {
     if (!task.due_date) return null;
-    try { return format(parseISO(task.due_date), settings.dateFormat, { locale: ko }); } catch { return task.due_date; }
+    try { return format(parseISO(task.due_date), settings.dateFormat, { locale: dateLocale }); } catch { return task.due_date; }
   };
 
   return (
@@ -22,13 +23,13 @@ export default function TaskItem({ task, projects, onToggle, onEdit, onDelete, c
       <Checkbox checked={task.completed} onCheckedChange={() => canComplete && onToggle?.(task)} disabled={!canComplete} className="mt-1" />
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
-          <span className={`w-2 h-2 rounded-full ${pri.dot} shrink-0`} title={`P${task.priority} ${pri.label}`} />
+          <span className={`w-2 h-2 rounded-full ${pri.dot} shrink-0`} title={`P${task.priority} ${t('priority.' + task.priority)}`} />
           <span className={`font-medium text-sm ${task.completed ? 'line-through text-muted-foreground' : ''}`}>
             {task.title}
           </span>
           {task.is_routine && (
             <span className="inline-flex items-center gap-0.5 text-[10px] text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded-full">
-              <Repeat2 className="w-3 h-3" /> {REPEAT_LABELS[task.repeat_frequency]}
+              <Repeat2 className="w-3 h-3" /> {t('repeat.' + task.repeat_frequency)}
             </span>
           )}
           {project && (
@@ -54,8 +55,8 @@ export default function TaskItem({ task, projects, onToggle, onEdit, onDelete, c
             <button className="p-1 rounded hover:bg-muted"><MoreVertical className="w-4 h-4 text-muted-foreground" /></button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            {canEdit && onEdit && <DropdownMenuItem onClick={() => onEdit(task)}><Pencil className="w-4 h-4 mr-2" />수정</DropdownMenuItem>}
-            <DropdownMenuItem onClick={() => onDelete(task)} className="text-destructive"><Trash2 className="w-4 h-4 mr-2" />삭제</DropdownMenuItem>
+            {canEdit && onEdit && <DropdownMenuItem onClick={() => onEdit(task)}><Pencil className="w-4 h-4 mr-2" />{t('common.edit')}</DropdownMenuItem>}
+            <DropdownMenuItem onClick={() => onDelete(task)} className="text-destructive"><Trash2 className="w-4 h-4 mr-2" />{t('common.delete')}</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

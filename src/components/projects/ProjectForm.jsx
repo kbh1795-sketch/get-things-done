@@ -3,11 +3,13 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useI18n } from '@/lib/I18nContext';
 
 const COLORS = ['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#06b6d4', '#8b5cf6', '#ef4444', '#64748b'];
 const EMPTY = { name: '', description: '', color: '#6366f1' };
 
 export default function ProjectForm({ open, onClose, onSave, project }) {
+  const { t } = useI18n();
   const [form, setForm] = useState(EMPTY);
 
   useEffect(() => {
@@ -27,20 +29,20 @@ export default function ProjectForm({ open, onClose, onSave, project }) {
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>{project ? '프로젝트 수정' : '새 프로젝트'}</DialogTitle>
+          <DialogTitle>{project ? t('projectform.titleEdit') : t('projectform.titleNew')}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="pname">프로젝트명</Label>
+            <Label htmlFor="pname">{t('projectform.nameLabel')}</Label>
             <Input id="pname" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} autoFocus required />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="pdesc">설명 (선택)</Label>
+            <Label htmlFor="pdesc">{t('projectform.descLabel')}</Label>
             <textarea id="pdesc" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={2}
               className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring" />
           </div>
           <div className="space-y-2">
-            <Label>색상</Label>
+            <Label>{t('projectform.colorLabel')}</Label>
             <div className="flex flex-wrap gap-2">
               {COLORS.map((c) => (
                 <button key={c} type="button" onClick={() => setForm({ ...form, color: c })}
@@ -50,8 +52,8 @@ export default function ProjectForm({ open, onClose, onSave, project }) {
             </div>
           </div>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={onClose}>취소</Button>
-            <Button type="submit">{project ? '수정' : '생성'}</Button>
+            <Button type="button" variant="outline" onClick={onClose}>{t('common.cancel')}</Button>
+            <Button type="submit">{project ? t('projectform.saveEdit') : t('projectform.saveNew')}</Button>
           </DialogFooter>
         </form>
       </DialogContent>

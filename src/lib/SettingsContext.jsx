@@ -12,7 +12,7 @@ const DEFAULTS = {
   petEnabled: true,
   petType: 'cat',
   petName: '',
-  language: 'ko',
+  language: 'en',
 };
 
 const SettingsContext = createContext(null);

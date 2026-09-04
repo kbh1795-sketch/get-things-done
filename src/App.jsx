@@ -8,6 +8,8 @@ import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ScrollToTop from './components/ScrollToTop';
 // Add page imports here
 import ProtectedRoute from '@/components/ProtectedRoute';
+import { SettingsProvider } from '@/lib/SettingsContext';
+import { I18nProvider } from '@/lib/I18nContext';
 import Layout from '@/components/Layout';
 import Home from '@/pages/Home';
 import Stats from '@/pages/Stats';
@@ -75,7 +77,11 @@ function App() {
       <QueryClientProvider client={queryClientInstance}>
         <Router>
           <ScrollToTop />
-          <AuthenticatedApp />
+          <SettingsProvider>
+            <I18nProvider>
+              <AuthenticatedApp />
+            </I18nProvider>
+          </SettingsProvider>
         </Router>
         <Toaster />
       </QueryClientProvider>

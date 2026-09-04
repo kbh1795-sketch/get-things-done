@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAllTasks } from '@/hooks/useTaskData';
 import { useSettings } from '@/lib/SettingsContext';
+import { useI18n } from '@/lib/I18nContext';
 import { computeDailyStreak } from '@/lib/achievements';
 import { getPetMessage } from '@/lib/petMessages';
 import { X } from 'lucide-react';
@@ -11,6 +12,7 @@ const PETS = { cat: '🐱', dog: '🐶', kangaroo: '🦘', lemur: '🐒', quokka
 
 export default function Pet() {
   const { settings } = useSettings();
+  const { t } = useI18n();
   const { data: tasks = [] } = useAllTasks();
   const [visible, setVisible] = useState(false);
   const [bubbleOpen, setBubbleOpen] = useState(false);
@@ -67,7 +69,7 @@ export default function Pet() {
               transition={{ type: 'spring', stiffness: 240, damping: 13 }}
               className="cursor-pointer select-none"
               onClick={() => setBubbleOpen((v) => !v)}
-              title="말풍선 열기/닫기"
+              title={t('pet.toggleBubble')}
             >
               <motion.div
                 animate={{ y: [0, -7, 0], rotate: [0, -4, 4, 0] }}

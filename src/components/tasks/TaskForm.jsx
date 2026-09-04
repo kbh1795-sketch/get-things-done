@@ -6,18 +6,15 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { PRIORITY_CONFIG } from '@/lib/taskUtils';
+import { useI18n } from '@/lib/I18nContext';
 
 const PRIORITIES = [1, 2, 3, 4].map((v) => ({ value: v, ...PRIORITY_CONFIG[v] }));
-const REPEAT_OPTIONS = [
-  { value: 'daily', label: '매일' },
-  { value: 'weekly', label: '매주' },
-  { value: 'monthly', label: '매월' },
-  { value: 'yearly', label: '매년' },
-];
+const REPEAT_OPTIONS = ['daily', 'weekly', 'monthly', 'yearly'];
 
 const EMPTY = { title: '', description: '', due_date: '', due_time: '', priority: 3, is_routine: false, repeat_frequency: 'daily', project_id: '' };
 
 export default function TaskForm({ open, onClose, onSave, task, projects, defaultDate }) {
+  const { t } = useI18n();
   const [form, setForm] = useState(EMPTY);
 
   useEffect(() => {
@@ -54,30 +51,30 @@ export default function TaskForm({ open, onClose, onSave, task, projects, defaul
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
-          <DialogTitle>{task ? '할 일 수정' : '새 할 일'}</DialogTitle>
+          <DialogTitle>{task ? t('taskform.titleEdit') : t('taskform.titleNew')}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="title">제목</Label>
-            <Input id="title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="할 일을 입력하세요" autoFocus required />
+            <Label htmlFor="title">{t('taskform.titleLabel')}</Label>
+            <Input id="title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder={t('taskform.titlePlaceholder')} autoFocus required />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="description">설명 (선택)</Label>
+            <Label htmlFor="description">{t('taskform.descLabel')}</Label>
             <textarea id="description" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={2}
               className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring" />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="due_date">날짜</Label>
+              <Label htmlFor="due_date">{t('taskform.dateLabel')}</Label>
               <Input id="due_date" type="date" value={form.due_date} onChange={(e) => setForm({ ...form, due_date: e.target.value })} />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="due_time">시간</Label>
+              <Label htmlFor="due_time">{t('taskform.timeLabel')}</Label>
               <Input id="due_time" type="time" value={form.due_time} onChange={(e) => setForm({ ...form, due_time: e.target.value })} />
             </div>
           </div>
           <div className="space-y-2">
-            <Label>중요도</Label>
+            <Label>{t('taskform.priorityLabel')}</Label>
             <div className="grid grid-cols-4 gap-2">
               {PRIORITIES.map((p) => (
                 <button key={p.value} type="button" onClick={() => setForm({ ...form, priority: p.value })}
@@ -86,17 +83,17 @@ export default function TaskForm({ open, onClose, onSave, task, projects, defaul
                   }`}>
                   <span className={`w-3 h-3 rounded-full ${p.dot}`} />
                   <span className="text-xs font-medium">P{p.value}</span>
-                  <span className="text-[10px]">{p.label}</span>
+                  <span className="text-[10px]">{t('priority.' + p.value)}</span>
                 </button>
               ))}
             </div>
           </div>
           <div className="space-y-2">
-            <Label>프로젝트 (선택)</Label>
+            <Label>{t('taskform.projectLabel')}</Label>
             <Select value={form.project_id || 'none'} onValueChange={(v) => setForm({ ...form, project_id: v === 'none' ? '' : v })}>
-              <SelectTrigger><SelectValue placeholder="프로젝트 없음" /></SelectTrigger>
+              <SelectTrigger><SelectValue placeholder={t('taskform.projectNone')} /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="none">프로젝트 없음</SelectItem>
+                <SelectItem value="none">{t('taskform.projectNone')}</SelectItem>
                 {projects?.map((p) => (
                   <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
                 ))}
@@ -105,29 +102,29 @@ export default function TaskForm({ open, onClose, onSave, task, projects, defaul
           </div>
           <div className="flex items-center justify-between rounded-lg border p-3">
             <div>
-              <Label htmlFor="is_routine" className="cursor-pointer">반복 할 일</Label>
-              <p className="text-xs text-muted-foreground">정기적으로 반복되는 작업</p>
+              <Label htmlFor="is_routine" className="cursor-pointer">{t('taskform.routineLabel')}</Label>
+              <p className="text-xs text-muted-foreground">{t('taskform.routineDesc')}</p>
             </div>
             <Switch id="is_routine" checked={form.is_routine} onCheckedChange={(c) => setForm({ ...form, is_routine: c })} />
           </div>
           {form.is_routine && (
             <div className="space-y-2">
-              <Label>반복 주기</Label>
+              <Label>{t('taskform.repeatLabel')}</Label>
               <div className="grid grid-cols-4 gap-2">
                 {REPEAT_OPTIONS.map((r) => (
-                  <button key={r.value} type="button" onClick={() => setForm({ ...form, repeat_frequency: r.value })}
+                  <button key={r} type="button" onClick={() => setForm({ ...form, repeat_frequency: r })}
                     className={`py-2 rounded-lg border-2 text-sm font-medium transition-colors ${
-                      form.repeat_frequency === r.value ? 'border-primary text-primary bg-primary/5' : 'border-border text-muted-foreground hover:bg-muted'
+                      form.repeat_frequency === r ? 'border-primary text-primary bg-primary/5' : 'border-border text-muted-foreground hover:bg-muted'
                     }`}>
-                    {r.label}
+                    {t('repeat.' + r)}
                   </button>
                 ))}
               </div>
             </div>
           )}
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={onClose}>취소</Button>
-            <Button type="submit">{task ? '수정' : '추가'}</Button>
+            <Button type="button" variant="outline" onClick={onClose}>{t('common.cancel')}</Button>
+            <Button type="submit">{task ? t('taskform.saveEdit') : t('taskform.saveNew')}</Button>
           </DialogFooter>
         </form>
       </DialogContent>
