@@ -14,17 +14,16 @@ export default function Pet() {
   const { settings } = useSettings();
   const { t } = useI18n();
   const { data: tasks = [] } = useAllTasks();
-  const [visible, setVisible] = useState(false);
+  const [visible] = useState(true);
   const [bubbleOpen, setBubbleOpen] = useState(false);
 
   useEffect(() => {
     if (!settings.petEnabled) return;
     if (sessionStorage.getItem('pet_shown')) return;
     sessionStorage.setItem('pet_shown', '1');
-    const show = setTimeout(() => setVisible(true), 600);
-    const bubble = setTimeout(() => setBubbleOpen(true), 1500);
-    const hide = setTimeout(() => setVisible(false), 17000);
-    return () => { clearTimeout(show); clearTimeout(bubble); clearTimeout(hide); };
+    const bubble = setTimeout(() => setBubbleOpen(true), 1200);
+    const hide = setTimeout(() => setBubbleOpen(false), 12000);
+    return () => { clearTimeout(bubble); clearTimeout(hide); };
   }, [settings.petEnabled]);
 
   if (!settings.petEnabled) return null;
@@ -52,7 +51,7 @@ export default function Pet() {
                   transition={{ type: 'spring', stiffness: 320, damping: 18 }}
                   className="relative max-w-[260px] rounded-2xl rounded-br-sm border bg-card shadow-xl p-4 pr-8"
                 >
-                  <button onClick={() => setVisible(false)} className="absolute top-2 right-2 text-muted-foreground hover:text-foreground" aria-label="close">
+                  <button onClick={() => setBubbleOpen(false)} className="absolute top-2 right-2 text-muted-foreground hover:text-foreground" aria-label="close">
                     <X className="w-4 h-4" />
                   </button>
                   <p className="text-sm font-medium mb-1">{msg.greeting}</p>
