@@ -26,7 +26,7 @@ const PETS = [
   { value: 'cat', emoji: '🐱' },
   { value: 'dog', emoji: '🐶' },
   { value: 'kangaroo', emoji: '🦘' },
-  { value: 'lemur', emoji: '🦝' },
+  { value: 'lemur', emoji: '🐒' },
   { value: 'quokka', emoji: '🦦' },
   { value: 'koala', emoji: '🐨' },
   { value: 'hedgehog', emoji: '🦔' },
