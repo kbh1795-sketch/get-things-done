@@ -8,9 +8,9 @@ const MESSAGES = {
   },
   en: {
     greeting: (name) => (name ? `${name} says hi!` : 'Hello!'),
-    noTasks: 'No tasks today. Want to plan something?',
+    noTasks: 'No tasks today. Fancy planning something?',
     remaining: (n) => `${n} tasks left today. You can do it!`,
-    allDone: 'All done for today! Amazing! 🎉',
+    allDone: 'All done for today! Brilliant! 🎉',
     streak: (n) => `${n}-day streak going! 🔥`,
   },
   zh: {

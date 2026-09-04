@@ -25,10 +25,13 @@ const DATE_FORMATS = [
 const PETS = [
   { value: 'cat', emoji: '🐱' },
   { value: 'dog', emoji: '🐶' },
+  { value: 'kangaroo', emoji: '🦘' },
+  { value: 'lemur', emoji: '🦝' },
+  { value: 'quokka', emoji: '🦦' },
+  { value: 'koala', emoji: '🐨' },
+  { value: 'hedgehog', emoji: '🦔' },
   { value: 'rabbit', emoji: '🐰' },
-  { value: 'bird', emoji: '🐦' },
-  { value: 'panda', emoji: '🐼' },
-  { value: 'fox', emoji: '🦊' },
+  { value: 'masterRabbit', emoji: '🐇' },
 ];
 
 const LANGUAGES = [

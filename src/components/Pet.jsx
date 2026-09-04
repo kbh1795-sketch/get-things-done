@@ -6,7 +6,7 @@ import { getPetMessage } from '@/lib/petMessages';
 import { X } from 'lucide-react';
 import { format } from 'date-fns';
 
-const PETS = { cat: '🐱', dog: '🐶', rabbit: '🐰', bird: '🐦', panda: '🐼', fox: '🦊' };
+const PETS = { cat: '🐱', dog: '🐶', kangaroo: '🦘', lemur: '🦝', quokka: '🦦', koala: '🐨', hedgehog: '🦔', rabbit: '🐰', masterRabbit: '🐇' };
 
 export default function Pet() {
   const { settings } = useSettings();
