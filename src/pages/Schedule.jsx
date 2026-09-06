@@ -127,10 +127,9 @@ export default function Schedule() {
             {uncompleted.map((t) => (
               <TaskItem key={t.id} task={t} projects={projects}
                 onToggle={handleToggle}
-                onEdit={isTodaySelected ? (task) => { setEditing(task); setFormOpen(true); } : undefined}
+                onEdit={(task) => { setEditing(task); setFormOpen(true); }}
                 onDelete={handleDelete}
-                canComplete={isTodaySelected}
-                canEdit={isTodaySelected} />
+                canComplete={isTodaySelected} />
             ))}
           </div>
           {completed.length > 0 && (
