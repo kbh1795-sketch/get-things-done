@@ -48,6 +48,7 @@ const dictEn = {
   'home.emptyHint': 'Add a new task, or check other dates in Schedule.',
   'home.completed': 'Done · {n}',
   'task.deleteConfirm': 'Delete this task?',
+  'task.delayToToday': 'Delay to today',
 
   'schedule.title': 'Schedule',
   'schedule.count': '{n}',
@@ -253,6 +254,7 @@ const dictKo = {
   'home.emptyHint': '새 할 일을 추가하거나 일정 탭에서 다른 날짜를 확인해 보세요',
   'home.completed': '완료됨 · {n}',
   'task.deleteConfirm': '이 할 일을 삭제하시겠습니까?',
+  'task.delayToToday': '오늘로 미루기',
 
   'schedule.title': '일정',
   'schedule.count': '{n}개',

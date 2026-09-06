@@ -1,4 +1,4 @@
-import { Repeat2, Clock, MoreVertical, Pencil, Trash2, Folder } from 'lucide-react';
+import { Repeat2, Clock, MoreVertical, Pencil, Trash2, Folder, CalendarClock } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { PRIORITY_CONFIG, formatTime } from '@/lib/taskUtils';
@@ -7,7 +7,7 @@ import { useI18n } from '@/lib/I18nContext';
 import TaskCountdown from './TaskCountdown';
 import { format, parseISO } from 'date-fns';
 
-export default function TaskItem({ task, projects, onToggle, onEdit, onDelete, canComplete = true, canEdit = true }) {
+export default function TaskItem({ task, projects, onToggle, onEdit, onDelay, onDelete, canComplete = true, canEdit = true }) {
   const pri = PRIORITY_CONFIG[task.priority] || PRIORITY_CONFIG[3];
   const project = projects?.find((p) => p.id === task.project_id);
   const { settings } = useSettings();
@@ -56,6 +56,7 @@ export default function TaskItem({ task, projects, onToggle, onEdit, onDelete, c
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             {canEdit && onEdit && <DropdownMenuItem onClick={() => onEdit(task)}><Pencil className="w-4 h-4 mr-2" />{t('common.edit')}</DropdownMenuItem>}
+            {onDelay && <DropdownMenuItem onClick={() => onDelay(task)}><CalendarClock className="w-4 h-4 mr-2" />{t('task.delayToToday')}</DropdownMenuItem>}
             <DropdownMenuItem onClick={() => onDelete(task)} className="text-destructive"><Trash2 className="w-4 h-4 mr-2" />{t('common.delete')}</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

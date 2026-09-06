@@ -9,7 +9,7 @@ import { getNextDueDate } from '@/lib/taskUtils';
 import { useSettings } from '@/lib/SettingsContext';
 import { useI18n } from '@/lib/I18nContext';
 import { playCompletionSound } from '@/lib/sound';
-import { format, parseISO, addDays, isToday, startOfWeek, differenceInDays } from 'date-fns';
+import { format, parseISO, addDays, isToday, startOfWeek, differenceInDays, isBefore } from 'date-fns';
 
 export default function Schedule() {
   const { data: tasks = [], isLoading } = useAllTasks();
@@ -23,8 +23,16 @@ export default function Schedule() {
 
   const isTodaySelected = isToday(parseISO(selectedDate));
   const dayTasks = tasks.filter((t) => !t.is_backlog && t.due_date === selectedDate);
-  const uncompleted = dayTasks.filter((t) => !t.completed);
-  const completed = dayTasks.filter((t) => t.completed);
+  const sortByTime = (arr) => [...arr].sort((a, b) => {
+    if (!a.due_time && !b.due_time) return 0;
+    if (!a.due_time) return 1;
+    if (!b.due_time) return -1;
+    return a.due_time.localeCompare(b.due_time);
+  });
+  const uncompleted = sortByTime(dayTasks.filter((t) => !t.completed));
+  const completed = sortByTime(dayTasks.filter((t) => t.completed));
+  const todayStr = format(new Date(), 'yyyy-MM-dd');
+  const canDelay = isBefore(parseISO(selectedDate), parseISO(todayStr));
 
   const weekStartsOn = settings.weekStart ?? 1;
   const weekStart = startOfWeek(parseISO(selectedDate), { weekStartsOn });
@@ -63,6 +71,10 @@ export default function Schedule() {
 
   const handleDelete = (task) => {
     if (confirm(t('task.deleteConfirm'))) deleteTask.mutate(task.id);
+  };
+
+  const handleDelay = (task) => {
+    updateTask.mutate({ id: task.id, data: { due_date: todayStr } });
   };
 
   const dateLabel = () => {
@@ -128,6 +140,7 @@ export default function Schedule() {
               <TaskItem key={t.id} task={t} projects={projects}
                 onToggle={handleToggle}
                 onEdit={(task) => { setEditing(task); setFormOpen(true); }}
+                onDelay={canDelay ? handleDelay : undefined}
                 onDelete={handleDelete}
                 canComplete={isTodaySelected} />
             ))}
