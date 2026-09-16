@@ -53,7 +53,7 @@ const dictEn = {
   'schedule.title': 'Schedule',
   'schedule.count': '{n}',
   'schedule.add': 'Add',
-  'schedule.readOnlyHint': 'Selected date allows view, add and delete only (no completion).',
+  'schedule.readOnlyHint': 'Completing a past task records it on its own date.',
   'schedule.empty': 'No tasks on this day',
 
   'taskform.titleEdit': 'Edit task',
@@ -259,7 +259,7 @@ const dictKo = {
   'schedule.title': '일정',
   'schedule.count': '{n}개',
   'schedule.add': '추가',
-  'schedule.readOnlyHint': '선택한 날짜는 조회·추가·삭제만 가능합니다 (완료 처리 불가).',
+  'schedule.readOnlyHint': '이전 할 일을 완료 처리하면 해당 날짜로 기록됩니다.',
   'schedule.empty': '이 날의 할 일이 없어요',
 
   'taskform.titleEdit': '할 일 수정',

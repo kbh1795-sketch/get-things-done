@@ -51,11 +51,10 @@ export default function Schedule() {
   };
 
   const handleToggle = (task) => {
-    if (!isTodaySelected) return;
-    const today = format(new Date(), 'yyyy-MM-dd');
+    const completedDate = task.due_date || format(new Date(), 'yyyy-MM-dd');
     if (!task.completed && settings.soundEnabled) playCompletionSound();
     if (!task.completed && task.is_routine && task.repeat_frequency && task.repeat_frequency !== 'none') {
-      updateTask.mutate({ id: task.id, data: { completed: true, completed_date: today } });
+      updateTask.mutate({ id: task.id, data: { completed: true, completed_date: completedDate } });
       const nextDate = getNextDueDate(task.due_date, task.repeat_frequency);
       const { id, created_date, updated_date, created_by_id, completed, completed_date, ...rest } = task;
       bulkCreateTasks.mutate([{ ...rest, completed: false, completed_date: null, due_date: nextDate }]);
@@ -65,7 +64,7 @@ export default function Schedule() {
       if (spawned) deleteTask.mutate(spawned.id);
       updateTask.mutate({ id: task.id, data: { completed: false, completed_date: null } });
     } else {
-      updateTask.mutate({ id: task.id, data: { completed: !task.completed, completed_date: !task.completed ? today : null } });
+      updateTask.mutate({ id: task.id, data: { completed: !task.completed, completed_date: !task.completed ? completedDate : null } });
     }
   };
 
@@ -142,7 +141,7 @@ export default function Schedule() {
                 onEdit={(task) => { setEditing(task); setFormOpen(true); }}
                 onDelay={canDelay ? handleDelay : undefined}
                 onDelete={handleDelete}
-                canComplete={isTodaySelected} />
+              />
             ))}
           </div>
           {completed.length > 0 && (
@@ -154,7 +153,6 @@ export default function Schedule() {
                     onToggle={handleToggle}
                     onEdit={isTodaySelected ? (task) => { setEditing(task); setFormOpen(true); } : undefined}
                     onDelete={handleDelete}
-                    canComplete={isTodaySelected}
                     canEdit={isTodaySelected} />
                 ))}
               </div>
