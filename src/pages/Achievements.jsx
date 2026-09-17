@@ -6,6 +6,7 @@ import { computeDailyStreak, computeWeeklyStreak, computeMonthlyStreak, getDayPr
 import { format } from 'date-fns';
 import { shareAchievement, shareToX } from '@/lib/share';
 import ShareCard from '@/components/achievements/ShareCard';
+import CompletionCharts from '@/components/achievements/CompletionCharts';
 import { Button } from '@/components/ui/button';
 import { Flame, Trophy, Share2 } from 'lucide-react';
 import confetti from 'canvas-confetti';
@@ -72,6 +73,8 @@ export default function Achievements() {
           <p className="text-xs text-muted-foreground mt-3">{t('achievements.notAchieved')}</p>
         )}
       </div>
+
+      <CompletionCharts tasks={tasks} />
 
       <div className="rounded-xl border bg-card p-4">
         <p className="text-sm font-medium mb-1 flex items-center gap-1"><Share2 className="w-4 h-4" /> {t('achievements.shareTitle')}</p>
