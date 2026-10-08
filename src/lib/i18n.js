@@ -14,6 +14,7 @@ export const DATE_LOCALES = { en: enUS, ko, zh: zhCN, ja, fr, es, de };
 
 const dictEn = {
   'nav.tasks': 'To-do',
+  'nav.sprint': 'Sprint',
   'nav.schedule': 'Schedule',
   'nav.stats': 'Stats',
   'nav.achievements': 'Achievements',
@@ -101,6 +102,13 @@ const dictEn = {
   'stats.totalDone': 'Total done',
   'stats.barName': 'Completed tasks',
 
+  'sprint.title': 'Sprint',
+  'sprint.subtitle': 'Projects you are focusing on right now',
+  'sprint.empty': 'No projects in your sprint',
+  'sprint.emptyHint': 'Add a project to focus on it here.',
+  'sprint.addProject': 'Add project',
+  'sprint.remove': 'Remove from sprint',
+  'sprint.noTasks': 'No tasks in this project',
   'projects.title': 'Projects',
   'projects.subtitle': 'Group tasks into projects',
   'projects.add': 'Add project',
@@ -225,6 +233,7 @@ const dictEn = {
 
 const dictKo = {
   'nav.tasks': '할 일',
+  'nav.sprint': '스프린트',
   'nav.schedule': '일정',
   'nav.stats': '성과',
   'nav.achievements': '성취',
@@ -312,6 +321,13 @@ const dictKo = {
   'stats.totalDone': '전체 완료',
   'stats.barName': '완료한 할 일',
 
+  'sprint.title': '스프린트',
+  'sprint.subtitle': '지금 집중하고 있는 프로젝트',
+  'sprint.empty': '스프린트에 등록된 프로젝트가 없어요',
+  'sprint.emptyHint': '프로젝트를 추가해 여기서 집중 관리하세요.',
+  'sprint.addProject': '프로젝트 추가',
+  'sprint.remove': '스프린트에서 제거',
+  'sprint.noTasks': '이 프로젝트에 할 일이 없어요',
   'projects.title': '프로젝트',
   'projects.subtitle': '할 일을 프로젝트로 묶어 관리하세요',
   'projects.add': '프로젝트 추가',

@@ -4,7 +4,7 @@ import { useAllTasks, useAllProjects, useProjectMutations, useTaskMutations } fr
 import ProjectForm from '@/components/projects/ProjectForm';
 import TaskItem from '@/components/tasks/TaskItem';
 import { Button } from '@/components/ui/button';
-import { Plus, Folder, Pencil, Trash2, ArrowLeft, Loader2 } from 'lucide-react';
+import { Plus, Folder, Pencil, Trash2, ArrowLeft, Loader2, Zap } from 'lucide-react';
 import { useI18n } from '@/lib/I18nContext';
 import { format } from 'date-fns';
 
@@ -118,6 +118,7 @@ export default function Projects() {
                     <h3 className="font-semibold">{p.name}</h3>
                   </div>
                   <div className="flex gap-1" onClick={(e) => e.stopPropagation()}>
+                    <button onClick={() => updateProject.mutate({ id: p.id, data: { in_sprint: !p.in_sprint } })} aria-label={t('sprint.title')} className={`p-2.5 min-w-[44px] min-h-[44px] rounded hover:bg-muted flex items-center justify-center ${p.in_sprint ? 'text-primary bg-primary/10' : 'text-muted-foreground'}`}><Zap className="w-3.5 h-3.5" /></button>
                     <button onClick={() => { setEditing(p); setFormOpen(true); }} aria-label={t('common.edit')} className="p-2.5 min-w-[44px] min-h-[44px] rounded hover:bg-muted flex items-center justify-center"><Pencil className="w-3.5 h-3.5 text-muted-foreground" /></button>
                     <button onClick={() => handleDelete(p)} aria-label={t('common.delete')} className="p-2.5 min-w-[44px] min-h-[44px] rounded hover:bg-muted flex items-center justify-center"><Trash2 className="w-3.5 h-3.5 text-muted-foreground" /></button>
                   </div>

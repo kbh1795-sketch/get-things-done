@@ -14,6 +14,11 @@
       "type": "string",
       "default": "#6366f1",
       "title": "\uc0c9\uc0c1"
+    },
+    "in_sprint": {
+      "type": "boolean",
+      "default": false,
+      "title": "\uc2a4\ud504\ub9b0\ud2b8 \ud3ec\ud568"
     }
   },
   "required": [

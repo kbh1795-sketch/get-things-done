@@ -11,7 +11,7 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import { SettingsProvider } from '@/lib/SettingsContext';
 import { I18nProvider } from '@/lib/I18nContext';
 import Layout from '@/components/Layout';
-import Home from '@/pages/Home';
+import Sprint from '@/pages/Sprint';
 import Schedule from '@/pages/Schedule';
 import Settings from '@/pages/Settings';
 import { lazy, Suspense } from 'react';
@@ -58,8 +58,8 @@ const AuthenticatedApp = () => {
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
         <Route element={<Layout />}>
-          <Route path="/" element={<Home />} />
-          <Route path="/schedule" element={<Schedule />} />
+          <Route path="/" element={<Schedule />} />
+          <Route path="/sprint" element={<Sprint />} />
           <Route path="/stats" element={<Stats />} />
           <Route path="/achievements" element={<Achievements />} />
           <Route path="/projects" element={<Projects />} />

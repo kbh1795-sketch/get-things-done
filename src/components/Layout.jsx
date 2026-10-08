@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
 import { useQueryClient } from '@tanstack/react-query';
-import { CheckSquare, FolderKanban, Inbox, LogOut, Target, Settings as SettingsIcon, Award, CalendarDays, ScrollText, BarChart3, MoreHorizontal, ChevronLeft } from 'lucide-react';
+import { FolderKanban, Inbox, LogOut, Target, Settings as SettingsIcon, Award, CalendarDays, ScrollText, Zap, MoreHorizontal, ChevronLeft } from 'lucide-react';
 import { useI18n } from '@/lib/I18nContext';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
@@ -17,10 +17,10 @@ export default function Layout() {
   const navigate = useNavigate();
   const [moreOpen, setMoreOpen] = useState(false);
 
-  const rootRoutes = ['/', '/schedule', '/projects', '/stats', '/settings', '/charter', '/backlog', '/achievements'];
+  const rootRoutes = ['/', '/sprint', '/projects', '/stats', '/settings', '/charter', '/backlog', '/achievements'];
   const titleMap = {
-    '/': t('nav.tasks'),
-    '/schedule': t('nav.schedule'),
+    '/': t('nav.schedule'),
+    '/sprint': t('nav.sprint'),
     '/projects': t('nav.projects'),
     '/stats': t('nav.stats'),
     '/settings': t('nav.settings'),
@@ -61,26 +61,25 @@ export default function Layout() {
   }, [location.pathname, isMobile]);
 
   const desktopNav = [
-    { to: '/', label: t('nav.tasks'), icon: CheckSquare, end: true },
-    { to: '/schedule', label: t('nav.schedule'), icon: CalendarDays },
+    { to: '/', label: t('nav.schedule'), icon: CalendarDays, end: true },
+    { to: '/sprint', label: t('nav.sprint'), icon: Zap },
+    { to: '/backlog', label: t('nav.backlog'), icon: Inbox },
     { to: '/projects', label: t('nav.projects'), icon: FolderKanban },
     { to: '/charter', label: t('nav.charter'), icon: ScrollText },
-    { to: '/backlog', label: t('nav.backlog'), icon: Inbox },
     { to: '/achievements', label: t('nav.achievements'), icon: Award },
     { to: '/settings', label: t('nav.settings'), icon: SettingsIcon },
   ];
 
   const mobileNav = [
-    { to: '/', label: t('nav.tasks'), icon: CheckSquare, end: true },
-    { to: '/schedule', label: t('nav.schedule'), icon: CalendarDays },
+    { to: '/', label: t('nav.schedule'), icon: CalendarDays, end: true },
+    { to: '/sprint', label: t('nav.sprint'), icon: Zap },
+    { to: '/backlog', label: t('nav.backlog'), icon: Inbox },
     { to: '/projects', label: t('nav.projects'), icon: FolderKanban },
-    { to: '/stats', label: t('nav.stats'), icon: BarChart3 },
     { to: '/settings', label: t('nav.settings'), icon: SettingsIcon },
   ];
 
   const moreNav = [
     { to: '/charter', label: t('nav.charter'), icon: ScrollText },
-    { to: '/backlog', label: t('nav.backlog'), icon: Inbox },
     { to: '/achievements', label: t('nav.achievements'), icon: Award },
   ];
 
