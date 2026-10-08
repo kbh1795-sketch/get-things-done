@@ -3,7 +3,7 @@ import { useAllTasks, useAllProjects, useProjectMutations, useTaskMutations } fr
 import TaskItem from '@/components/tasks/TaskItem';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Plus, Zap, X, Loader2 } from 'lucide-react';
+import { Plus, Zap, X, Loader2, ChevronDown } from 'lucide-react';
 import { useI18n } from '@/lib/I18nContext';
 import { format } from 'date-fns';
 
@@ -14,6 +14,8 @@ export default function Sprint() {
   const { updateTask, deleteTask } = useTaskMutations();
   const { t } = useI18n();
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [open, setOpen] = useState({});
+  const toggle = (id) => setOpen((o) => ({ ...o, [id]: !o[id] }));
 
   const sprintProjects = projects.filter((p) => p.in_sprint);
   const availableProjects = projects.filter((p) => !p.in_sprint);
@@ -78,18 +80,20 @@ export default function Sprint() {
             const completed = pTasks.filter((tk) => tk.completed);
             return (
               <div key={p.id} className="rounded-xl border bg-card p-4">
-                <div className="flex items-start justify-between mb-3">
+                <div className="flex items-start justify-between mb-3 cursor-pointer" onClick={() => toggle(p.id)}>
                   <div className="flex items-center gap-2">
                     <div className="w-3 h-3 rounded-full" style={{ backgroundColor: p.color }} />
                     <h3 className="font-semibold">{p.name}</h3>
+                    <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform ${open[p.id] ? 'rotate-180' : ''}`} />
                   </div>
-                  <button onClick={() => removeFromSprint(p.id)} aria-label={t('sprint.remove')} className="p-2.5 min-w-[44px] min-h-[44px] rounded hover:bg-muted flex items-center justify-center">
+                  <button onClick={(e) => { e.stopPropagation(); removeFromSprint(p.id); }} aria-label={t('sprint.remove')} className="p-2.5 min-w-[44px] min-h-[44px] rounded hover:bg-muted flex items-center justify-center">
                     <X className="w-4 h-4 text-muted-foreground" />
                   </button>
                 </div>
                 {p.description && <p className="text-xs text-muted-foreground mb-3">{p.description}</p>}
                 <div className="flex justify-between text-xs text-muted-foreground mb-1"><span>{done} / {pTasks.length}</span><span>{progress}%</span></div>
                 <div className="h-1.5 rounded-full bg-muted overflow-hidden mb-4"><div className="h-full rounded-full" style={{ width: `${progress}%`, backgroundColor: p.color }} /></div>
+                {open[p.id] && (
                 <div className="space-y-2">
                   {pTasks.length === 0 ? (
                     <p className="text-center text-muted-foreground py-6 text-sm">{t('sprint.noTasks')}</p>
@@ -111,6 +115,7 @@ export default function Sprint() {
                     </>
                   )}
                 </div>
+                )}
               </div>
             );
           })}
