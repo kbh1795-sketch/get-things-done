@@ -15,6 +15,7 @@ export default function Backlog() {
   const { t } = useI18n();
   const [title, setTitle] = useState('');
   const [priority, setPriority] = useState(3);
+  const [projectId, setProjectId] = useState('');
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState(null);
 
@@ -23,8 +24,9 @@ export default function Backlog() {
   const handleAdd = (e) => {
     e.preventDefault();
     if (!title.trim()) return;
-    createTask.mutate({ title: title.trim(), is_backlog: true, priority });
+    createTask.mutate({ title: title.trim(), is_backlog: true, priority, project_id: projectId || undefined });
     setTitle('');
+    setProjectId('');
   };
 
   const handlePromote = (task) => {
@@ -53,6 +55,12 @@ export default function Backlog() {
           triggerClassName="w-20 shrink-0"
           options={[1, 2, 3, 4].map((p) => ({ value: String(p), label: `P${p}` }))}
         />
+        <MobileSelect
+          value={projectId}
+          onValueChange={setProjectId}
+          triggerClassName="w-32 shrink-0"
+          options={[{ value: '', label: t('taskform.projectNone') }, ...projects.map((p) => ({ value: p.id, label: p.name }))]}
+        />
         <Button type="submit" className="shrink-0"><Inbox className="w-4 h-4 mr-1" /> {t('common.add')}</Button>
       </form>
 
@@ -67,10 +75,14 @@ export default function Backlog() {
         <div className="space-y-2">
           {backlogTasks.map((task) => {
             const pri = PRIORITY_CONFIG[task.priority] || PRIORITY_CONFIG[3];
+            const project = projects.find((p) => p.id === task.project_id);
             return (
               <div key={task.id} className="group flex items-center gap-3 p-3 rounded-lg border bg-card hover:shadow-sm">
                 <span className={`w-2 h-2 rounded-full ${pri.dot} shrink-0`} />
                 <span className="flex-1 text-sm font-medium">{task.title}</span>
+                {project && (
+                  <span className="hidden sm:inline-flex items-center text-xs px-1.5 py-0.5 rounded-full shrink-0" style={{ color: project.color, backgroundColor: project.color + '15' }}>{project.name}</span>
+                )}
                 <span className="text-xs text-muted-foreground">P{task.priority}</span>
                 <Button size="sm" variant="outline" onClick={() => handlePromote(task)}><ArrowUpRight className="w-3.5 h-3.5 mr-1" />{t('backlog.promote')}</Button>
                 <button onClick={() => deleteTask.mutate(task.id)} aria-label={t('common.delete')} className="p-2.5 min-w-[44px] min-h-[44px] rounded hover:bg-muted flex items-center justify-center md:opacity-0 md:group-hover:opacity-100"><Trash2 className="w-4 h-4 text-muted-foreground" /></button>
