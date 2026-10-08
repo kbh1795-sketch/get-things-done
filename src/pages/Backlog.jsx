@@ -56,10 +56,10 @@ export default function Backlog() {
           options={[1, 2, 3, 4].map((p) => ({ value: String(p), label: `P${p}` }))}
         />
         <MobileSelect
-          value={projectId}
-          onValueChange={setProjectId}
+          value={projectId || 'none'}
+          onValueChange={(v) => setProjectId(v === 'none' ? '' : v)}
           triggerClassName="w-32 shrink-0"
-          options={[{ value: '', label: t('taskform.projectNone') }, ...projects.map((p) => ({ value: p.id, label: p.name }))]}
+          options={[{ value: 'none', label: t('taskform.projectNone') }, ...projects.map((p) => ({ value: p.id, label: p.name }))]}
         />
         <Button type="submit" className="shrink-0"><Inbox className="w-4 h-4 mr-1" /> {t('common.add')}</Button>
       </form>
