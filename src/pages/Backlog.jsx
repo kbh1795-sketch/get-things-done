@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { useAllTasks, useAllProjects, useTaskMutations } from '@/hooks/useTaskData';
+import { useAllTasks, useAllProjects, useTaskMutations, useProjectMutations } from '@/hooks/useTaskData';
 import TaskForm from '@/components/tasks/TaskForm';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Inbox, ArrowUpRight, Trash2, Loader2 } from 'lucide-react';
+import { Inbox, ArrowUpRight, Trash2, Loader2, FolderPlus } from 'lucide-react';
 import MobileSelect from '@/components/ui/mobile-select';
 import { PRIORITY_CONFIG } from '@/lib/taskUtils';
 import { useI18n } from '@/lib/I18nContext';
@@ -12,10 +12,10 @@ export default function Backlog() {
   const { data: tasks = [], isLoading } = useAllTasks();
   const { data: projects = [] } = useAllProjects();
   const { createTask, updateTask, deleteTask } = useTaskMutations();
+  const { createProject } = useProjectMutations();
   const { t } = useI18n();
   const [title, setTitle] = useState('');
   const [priority, setPriority] = useState(3);
-  const [projectId, setProjectId] = useState('');
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState(null);
 
@@ -24,9 +24,13 @@ export default function Backlog() {
   const handleAdd = (e) => {
     e.preventDefault();
     if (!title.trim()) return;
-    createTask.mutate({ title: title.trim(), is_backlog: true, priority, project_id: projectId || undefined });
+    createTask.mutate({ title: title.trim(), is_backlog: true, priority });
     setTitle('');
-    setProjectId('');
+  };
+
+  const handleConvertToProject = (task) => {
+    createProject.mutate({ name: task.title });
+    deleteTask.mutate(task.id);
   };
 
   const handlePromote = (task) => {
@@ -55,12 +59,6 @@ export default function Backlog() {
           triggerClassName="w-20 shrink-0"
           options={[1, 2, 3, 4].map((p) => ({ value: String(p), label: `P${p}` }))}
         />
-        <MobileSelect
-          value={projectId || 'none'}
-          onValueChange={(v) => setProjectId(v === 'none' ? '' : v)}
-          triggerClassName="w-32 shrink-0"
-          options={[{ value: 'none', label: t('taskform.projectNone') }, ...projects.map((p) => ({ value: p.id, label: p.name }))]}
-        />
         <Button type="submit" className="shrink-0"><Inbox className="w-4 h-4 mr-1" /> {t('common.add')}</Button>
       </form>
 
@@ -75,15 +73,12 @@ export default function Backlog() {
         <div className="space-y-2">
           {backlogTasks.map((task) => {
             const pri = PRIORITY_CONFIG[task.priority] || PRIORITY_CONFIG[3];
-            const project = projects.find((p) => p.id === task.project_id);
             return (
               <div key={task.id} className="group flex items-center gap-3 p-3 rounded-lg border bg-card hover:shadow-sm">
                 <span className={`w-2 h-2 rounded-full ${pri.dot} shrink-0`} />
                 <span className="flex-1 text-sm font-medium">{task.title}</span>
-                {project && (
-                  <span className="hidden sm:inline-flex items-center text-xs px-1.5 py-0.5 rounded-full shrink-0" style={{ color: project.color, backgroundColor: project.color + '15' }}>{project.name}</span>
-                )}
                 <span className="text-xs text-muted-foreground">P{task.priority}</span>
+                <Button size="sm" variant="outline" onClick={() => handleConvertToProject(task)}><FolderPlus className="w-3.5 h-3.5 mr-1" />{t('backlog.toProject')}</Button>
                 <Button size="sm" variant="outline" onClick={() => handlePromote(task)}><ArrowUpRight className="w-3.5 h-3.5 mr-1" />{t('backlog.promote')}</Button>
                 <button onClick={() => deleteTask.mutate(task.id)} aria-label={t('common.delete')} className="p-2.5 min-w-[44px] min-h-[44px] rounded hover:bg-muted flex items-center justify-center md:opacity-0 md:group-hover:opacity-100"><Trash2 className="w-4 h-4 text-muted-foreground" /></button>
               </div>

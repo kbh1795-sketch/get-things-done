@@ -132,6 +132,7 @@ const dictEn = {
   'backlog.placeholder': 'Add a backlog item...',
   'backlog.empty': 'Backlog is empty',
   'backlog.promote': 'To GTD',
+  'backlog.toProject': 'To project',
 
   'achievements.title': 'Achievements',
   'achievements.subtitle': 'Stay motivated with streaks and milestones',
@@ -351,6 +352,7 @@ const dictKo = {
   'backlog.placeholder': '백로그에 추가할 항목...',
   'backlog.empty': '백로그가 비어있어요',
   'backlog.promote': 'GTD로',
+  'backlog.toProject': '프로젝트로',
 
   'achievements.title': '성취',
   'achievements.subtitle': '연속 달성과 마일스톤으로 동기를 얻으세요',
